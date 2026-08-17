@@ -1,0 +1,321 @@
+{
+  "ignorePatterns": "**/*.gen.ts\n**/*.gen.d.ts\n**/worker-configuration.d.ts\n**/routeTree.gen.ts\n**/*.po\n**/translations/**\n**/locales/**\n**/dist/**\n**/.wrangler/**",
+  "rules": [
+    {
+      "id": "no-any",
+      "rule": "Never use `any`. Use `unknown` for unknown shapes (narrow with type guards) or `Record<string, unknown>` for objects with unknown structure. `Record<string, any>` only with a justifying comment.",
+      "scope": ["**/*.ts", "**/*.tsx"],
+      "severity": "high"
+    },
+    {
+      "id": "no-non-null-assertion",
+      "rule": "Avoid the `!` non-null assertion operator. Use optional chaining or a type guard. Only acceptable with a justifying biome-ignore comment.",
+      "scope": ["**/*.ts", "**/*.tsx"],
+      "severity": "high"
+    },
+    {
+      "id": "readonly-immutable-types",
+      "rule": "Mark inputs and interface fields as `readonly` when the value won't change. Use `readonly T[]` over `T[]` for array inputs.",
+      "scope": ["**/*.ts", "**/*.tsx"],
+      "severity": "medium"
+    },
+    {
+      "id": "generics-preserve-types",
+      "rule": "Utility functions that operate on objects should use generics like `<T, K extends keyof T>` to preserve return types. Don't accept `object` or cast.",
+      "scope": ["**/*.ts", "**/*.tsx"],
+      "severity": "medium"
+    },
+    {
+      "id": "discriminated-unions",
+      "rule": "Use tagged unions like `{ status: 'loading' } | { status: 'success'; data: T }` for state instead of multiple boolean flags.",
+      "scope": ["**/*.ts", "**/*.tsx"],
+      "severity": "medium"
+    },
+
+    {
+      "id": "thin-react-layer",
+      "rule": "Components render UI and call event handlers. Business logic (validation, transformation, contract calls) belongs in pure helpers like `*.handlers.ts`, `*.transactions.ts`, or `helpers/`. Flag components mixing fetch logic, encoding, validation, and rendering.",
+      "scope": ["apps/**/*.tsx"],
+      "severity": "high"
+    },
+    {
+      "id": "no-effect-data-fetching",
+      "rule": "Never fetch data in `useEffect`. Use TanStack Query (`useQuery`, `useQueries`, `useSuspenseQuery`). Manual `useState` + `useEffect` + `setLoading/setError` patterns are forbidden.",
+      "scope": ["apps/**/*.ts", "apps/**/*.tsx"],
+      "severity": "high"
+    },
+    {
+      "id": "no-effect-transaction-chaining",
+      "rule": "Multi-step transaction flows must use an XState machine. Flag `useEffect` that calls `transactionManager.startTransaction()` based on another transaction's state, or `hasTriggered`-style guard flags.",
+      "scope": ["apps/**/*.ts", "apps/**/*.tsx"],
+      "severity": "high"
+    },
+    {
+      "id": "arrow-function-components",
+      "rule": "Use `const Component = (props) => {}` for React components. Reserve `function` declarations for utilities. Exception: TanStack Router `RouteComponent` declared via `createFileRoute(...)({ component })` may use `function`.",
+      "scope": ["apps/**/*.tsx"],
+      "severity": "medium"
+    },
+    {
+      "id": "extract-effect-to-hook",
+      "rule": "Effects in components must be extracted to a named custom hook unless: ≤5 lines, no async logic, no domain logic, no external dependencies. Does not apply inside custom hooks themselves.",
+      "scope": ["apps/**/*.tsx"],
+      "severity": "medium"
+    },
+    {
+      "id": "no-business-logic-in-hooks",
+      "rule": "Custom hooks wrap framework/browser APIs (DOM, localStorage, wagmi, TanStack hooks, XState). Business logic belongs in pure functions called from event handlers. Flag hooks with 30+ lines of validation/encoding logic.",
+      "scope": ["apps/**/hooks/**", "apps/**/*.tsx"],
+      "severity": "medium"
+    },
+    {
+      "id": "pattern-match-complex-conditionals",
+      "rule": "Use `ts-pattern`'s `match()` for 3+ branches or state discrimination. Avoid nested ternaries and chained `&&` with falsy-prone values (`0`, `''`, `null`).",
+      "scope": ["apps/**/*.tsx", "apps/**/*.ts"],
+      "severity": "medium"
+    },
+
+    {
+      "id": "no-mutation",
+      "rule": "Don't mutate data structures. Use spreads, `map`, `filter` over `push`/`splice`/direct field assignment on shared state.",
+      "scope": ["apps/**/*.ts", "apps/**/*.tsx"],
+      "severity": "high"
+    },
+    {
+      "id": "mutation-isPending-direct",
+      "rule": "When using `useMutation`, read `mutation.isPending`, `mutation.isSuccess`, `mutation.data` directly. Don't create derived `useState` like `const isSubmitting = mutation.isPending`.",
+      "scope": ["apps/**/*.tsx"],
+      "severity": "medium"
+    },
+
+    {
+      "id": "resultQueryOptions-factories",
+      "rule": "Query helpers should export `getXxxQueryOptions(params)` that wraps `ResultFn` data fetchers via `resultQueryOptions`. Call sites use `useQuery(getXxxQueryOptions(...))` — no custom hook wrapper.",
+      "scope": ["apps/**/*.ts", "apps/**/*.tsx"],
+      "severity": "medium"
+    },
+    {
+      "id": "query-data-unwrapped",
+      "rule": "TanStack Query `data` returned via `resultQueryOptions` is already unwrapped; `error` is the `TaggedError` instance. Always check `isLoading`, `error`, `!data` separately. Don't call `.match()` or read `.value` on `data`.",
+      "scope": ["apps/**/*.ts", "apps/**/*.tsx"],
+      "severity": "medium"
+    },
+    {
+      "id": "object-based-query-keys",
+      "rule": "Use `createQueryKey<'name', Params>()` helper with params as a single object: `recordsQueryKey({ name, texts })`, not `['records', name, texts]`. Object form enables partial invalidation.",
+      "scope": ["apps/**/*.ts", "apps/**/*.tsx", "packages/**/*.ts"],
+      "severity": "medium"
+    },
+    {
+      "id": "no-query-waterfalls",
+      "rule": "When query B depends on query A's data, split into separate components rather than gating B with `enabled: !!a.data` in the same component.",
+      "scope": ["apps/**/*.tsx"],
+      "severity": "medium"
+    },
+    {
+      "id": "independent-query-states",
+      "rule": "Don't combine query states with `||` (`isLoading: a.isLoading || b.isLoading`). Render each section's loading/error states independently so users see partial data.",
+      "scope": ["apps/**/*.tsx"],
+      "severity": "medium"
+    },
+    {
+      "id": "useQueries-for-parallel",
+      "rule": "When iterating over N items, use `useQueries({ queries: items.map(...) })` rather than N parallel `useQuery` calls.",
+      "scope": ["apps/**/*.tsx"],
+      "severity": "medium"
+    },
+
+    {
+      "id": "no-mix-result-trycatch",
+      "rule": "Never mix `Result` with `try/catch` inside a function that returns `Result`. Pick one approach per function. `try/catch` is acceptable at the outermost event-handler boundary calling helpers that throw.",
+      "scope": ["**/*.ts", "**/*.tsx"],
+      "severity": "high"
+    },
+    {
+      "id": "no-manual-result-unwrap-throw",
+      "rule": "Never write `.then(r => { if (r.isErr()) throw r.error; return r.value })`. Chain Results with `.andThen()` or yield in a `ResultFn` generator.",
+      "scope": ["**/*.ts", "**/*.tsx"],
+      "severity": "high"
+    },
+    {
+      "id": "tagged-error-classes",
+      "rule": "Define error classes extending `TaggedError('NAME')<{ cause: unknown }>` per operation. Enables discriminated-union matching on errors.",
+      "scope": ["**/*.ts", "**/*.tsx"],
+      "severity": "medium"
+    },
+    {
+      "id": "resultfn-composition",
+      "rule": "Multi-step async pipelines that return `Result` should use `ResultFn(async function* () { ... })` with `yield*` to chain Results without manual error propagation.",
+      "scope": ["**/*.ts", "**/*.tsx"],
+      "severity": "medium"
+    },
+    {
+      "id": "fromSync-not-trycatch",
+      "rule": "Wrap throwing sync code with `fromSync` (from `@ens-apps/utils`) or `fromThrowable` (from `neverthrow`). Don't `try/catch` around sync code that should return `Result`.",
+      "scope": ["**/*.ts", "**/*.tsx"],
+      "severity": "medium"
+    },
+    {
+      "id": "no-yield-await",
+      "rule": "Inside `ResultFn` generators, `yield*` already handles async Results. Writing `yield* await ResultAsync.fromPromise(...)` is redundant — drop the `await`.",
+      "scope": ["**/*.ts", "**/*.tsx"],
+      "severity": "medium"
+    },
+    {
+      "id": "early-return-handlers",
+      "rule": "In event handlers, prefer `if (result.isErr()) return` over `.match()`. `.match()` belongs in functional composition, not imperative UI code.",
+      "scope": ["apps/**/*.tsx"],
+      "severity": "medium"
+    },
+
+    {
+      "id": "bigint-blockchain-values",
+      "rule": "All blockchain numeric values (wei, durations in seconds, prices, expiries, gas) must be `bigint`. Use literal `n` suffix or `BigInt()`. No `number` for on-chain numerics.",
+      "scope": ["apps/**/*.ts", "apps/**/*.tsx", "packages/**/*.ts"],
+      "severity": "high"
+    },
+    {
+      "id": "clients-instantiated-once",
+      "rule": "Never call `createPublicClient` or `createWalletClient` inside components or render functions. Use shared clients via `usePublicClient`, `useWalletClient`, or `safeGetClient`.",
+      "scope": ["apps/**/*.ts", "apps/**/*.tsx"],
+      "severity": "high"
+    },
+    {
+      "id": "safeGetClient-in-resultfn",
+      "rule": "Inside `ResultFn` data helpers, get the public client via `yield* safeGetClient()` rather than constructing or fetching it directly.",
+      "scope": ["apps/**/hooks/**", "apps/**/utils/**"],
+      "severity": "medium"
+    },
+    {
+      "id": "normalize-ens-names",
+      "rule": "User-supplied ENS names must pass through `normalize` from `viem/ens` before being used in contract calls or queries.",
+      "scope": ["apps/**/*.ts", "apps/**/*.tsx"],
+      "severity": "medium"
+    },
+    {
+      "id": "alias-ensjs-imports",
+      "rule": "When wrapping an ENSjs function with a local helper of the same name, import as `getXxx as ensjs_getXxx` (or `ensjsGetXxx`). Also import the matching `GetXxxErrorType` for `TaggedError.cause` typing.",
+      "scope": ["apps/**/hooks/**", "apps/**/utils/**"],
+      "severity": "medium"
+    },
+    {
+      "id": "ensjs-two-part-writes",
+      "rule": "Inside `@ensdomains/ensjs`, writes split into `xxxWriteParameters` (returns params) and `xxx` (executes). App-level helpers may use the single request-builder pattern instead.",
+      "scope": ["packages/ensjs/**"],
+      "severity": "medium"
+    },
+    {
+      "id": "no-writecontract-multi-step",
+      "rule": "Multi-step transaction flows must use the transaction-manager, not wagmi's `useWriteContract`. Flag direct wagmi writes for flows that chain multiple transactions.",
+      "scope": ["apps/**/*.tsx"],
+      "severity": "medium"
+    },
+
+    {
+      "id": "file-naming-conventions",
+      "rule": "Components `PascalCase.tsx`, utilities `camelCase.ts`, hooks `use*.ts`, types `*.types.ts`, handlers `*.handlers.ts`, machines `*.machine.ts`, mocks `*.mock.ts` or `MOCK.ts`, tests `*.test.ts(x)`.",
+      "scope": ["apps/**", "packages/**"],
+      "severity": "medium"
+    },
+    {
+      "id": "boolean-prefixes",
+      "rule": "Boolean variables and props use `is*`, `has*`, `should*`, or `can*` prefixes. Flag bare nouns/verbs (e.g. `loading` → `isLoading`, `editRecords` → `canEditRecords`).",
+      "scope": ["**/*.ts", "**/*.tsx"],
+      "severity": "medium"
+    },
+    {
+      "id": "constants-upper-snake",
+      "rule": "True constants use `UPPER_SNAKE_CASE` (addresses, durations, magic numbers). Config objects stay `camelCase`.",
+      "scope": ["**/*.ts", "**/*.tsx"],
+      "severity": "medium"
+    },
+    {
+      "id": "mock-data-gated",
+      "rule": "Mock data lives in `*.mock.ts` files and is gated by `import.meta.env.DEV` or a feature flag. Never mix mock data into production code paths.",
+      "scope": ["apps/**"],
+      "severity": "medium"
+    },
+
+    {
+      "id": "cn-class-helper",
+      "rule": "Use `cn` from `@/lib/utils` for conflict-resolving Tailwind class merges. Don't introduce `tw`/`twm` unless the surrounding area already uses them.",
+      "scope": ["apps/**/*.tsx"],
+      "severity": "medium"
+    },
+    {
+      "id": "no-arbitrary-tailwind",
+      "rule": "Avoid arbitrary Tailwind values like `w-[37px]`, `text-[#3B82F6]`. Use design tokens (`size-9`, `text-primary`). Allowed only with a justifying inline comment.",
+      "scope": ["apps/**/*.tsx"],
+      "severity": "medium"
+    },
+    {
+      "id": "lucide-size-class",
+      "rule": "Size Lucide icons with `className=\"size-4\"`, not `size={16}` or `width={16} height={16}` props.",
+      "scope": ["apps/**/*.tsx"],
+      "severity": "medium"
+    },
+    {
+      "id": "no-emojis-in-code",
+      "rule": "No emojis in source code unless the user explicitly requested them.",
+      "scope": ["**/*.ts", "**/*.tsx"],
+      "severity": "low"
+    },
+
+    {
+      "id": "focus-visible-rings",
+      "rule": "Use `focus-visible:ring-*` classes for keyboard focus. Don't strip `outline` without a replacement, and don't use `:focus` for the ring (it triggers on mouse clicks too).",
+      "scope": ["apps/**/*.tsx"],
+      "severity": "medium"
+    },
+    {
+      "id": "button-type-attr",
+      "rule": "Buttons need `type=\"button\"` unless inside a form needing submit semantics.",
+      "scope": ["apps/**/*.tsx"],
+      "severity": "medium"
+    },
+    {
+      "id": "div-click-needs-keyboard",
+      "rule": "Non-button elements with `onClick` need `onKeyDown` (Enter/Space), `role`, and `tabIndex` — or should be a `<button>` instead.",
+      "scope": ["apps/**/*.tsx"],
+      "severity": "medium"
+    },
+    {
+      "id": "label-input-association",
+      "rule": "`<label htmlFor=\"x\">` must match an `<input id=\"x\">`. Use `useId()` to generate ids.",
+      "scope": ["apps/**/*.tsx"],
+      "severity": "medium"
+    },
+
+    {
+      "id": "no-premature-memo",
+      "rule": "Don't `useMemo`/`useCallback` for cheap operations or values not used as a dependency. Flag clearly wasteful cases (e.g. memoizing a string concat).",
+      "scope": ["apps/**/*.tsx"],
+      "severity": "low"
+    },
+    {
+      "id": "memo-for-deps-stability",
+      "rule": "When a value is passed as a dependency to `useEffect`, `useQuery`, or a memoized child, memoize the parent to prevent infinite loops or refetches.",
+      "scope": ["apps/**/*.tsx"],
+      "severity": "low"
+    },
+
+    {
+      "id": "component-prop-count",
+      "rule": "Many props (~10+) can signal a component doing too much. If it reads that way, suggest a fitting remedy — grouping related props into an object, composition, or splitting — and use judgement; other approaches are fine. See STYLEGUIDE.md 'Number of Props'.",
+      "scope": ["apps/**/*.tsx", "packages/**/*.tsx"],
+      "severity": "medium"
+    },
+    {
+      "id": "file-length",
+      "rule": "Files over ~500 lines are a soft signal the file may do too much; suggest splitting by responsibility, but leave cohesive files alone. See STYLEGUIDE.md 'Component Size and Complexity'.",
+      "scope": ["apps/**/*.tsx", "apps/**/*.ts", "packages/**/*.tsx", "packages/**/*.ts"],
+      "severity": "medium"
+    },
+    {
+      "id": "one-component-per-file",
+      "rule": "Prefer one primary component per file. Small co-located helpers are fine, even with a little local state; flag only when several substantial components in one file would clearly be better split out. See STYLEGUIDE.md.",
+      "scope": ["apps/**/*.tsx", "packages/**/*.tsx"],
+      "severity": "medium"
+    }
+  ]
+}

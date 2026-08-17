@@ -1,0 +1,20 @@
+# Defense-in-depth headers for static assets served directly by the assets
+# binding (these paths bypass the worker via `run_worker_first` in
+# wrangler.jsonc, so `withSecurityHeaders` in the worker can't reach them).
+# Document-level CSP already governs sub-resource loading, so no CSP here.
+/assets/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+/fonts/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+/icons/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+/client/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY

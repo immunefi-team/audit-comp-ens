@@ -1,0 +1,24 @@
+{
+  "name": "@ens-apps/shared-schema",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./notifications": "./src/notifications/index.ts",
+    "./telegram": "./src/telegram/index.ts",
+    "./transactions": "./src/transactions/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "lint": "biome check"
+  },
+  "dependencies": {
+    "valibot": "^1.2.0"
+  },
+  "devDependencies": {
+    "typescript": "catalog:typescript6",
+    "vitest": "catalog:"
+  }
+}

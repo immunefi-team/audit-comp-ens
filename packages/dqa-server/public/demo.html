@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DQA Demo — sample app</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f6f7f9; color: #1a1a1a; }
+    header { background: #fff; border-bottom: 1px solid #e7e7e7; padding: 16px 32px;
+      display: flex; align-items: center; justify-content: space-between; }
+    .logo { font-weight: 800; font-size: 18px; }
+    nav a { margin-left: 20px; text-decoration: none; color: #555; font-weight: 600; font-size: 14px; }
+    .wrap { max-width: 880px; margin: 40px auto; padding: 0 24px; }
+    .hero { background: linear-gradient(135deg,#1971c2,#0c8599); color: #fff; border-radius: 16px;
+      padding: 40px; margin-bottom: 28px; }
+    .hero h1 { margin: 0 0 8px; font-size: 30px; }
+    .hero p { margin: 0 0 20px; opacity: .9; }
+    .search { display: flex; gap: 8px; max-width: 420px; }
+    .search input { flex: 1; padding: 12px 14px; border: none; border-radius: 10px; font-size: 15px; }
+    .search button { padding: 12px 20px; border: none; border-radius: 10px; background: #1a1a1a; color: #fff;
+      font-weight: 700; cursor: pointer; }
+    .grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+    .card { background: #fff; border: 1px solid #ececec; border-radius: 14px; padding: 20px; }
+    .card h3 { margin: 0 0 6px; font-size: 16px; }
+    .card p { margin: 0 0 14px; color: #666; font-size: 14px; }
+    .price { font-size: 22px; font-weight: 800; }
+    .badge { display: inline-block; background: #e7f5ff; color: #1971c2; font-size: 12px; font-weight: 700;
+      padding: 3px 8px; border-radius: 6px; margin-bottom: 10px; }
+    .cta { display: block; width: 100%; margin-top: 14px; padding: 10px; border: none; border-radius: 10px;
+      background: #1971c2; color: #fff; font-weight: 700; cursor: pointer; }
+    footer { text-align: center; color: #999; font-size: 13px; padding: 40px; }
+  </style>
+</head>
+<body>
+  <header data-component="TopNav">
+    <div class="logo">◇ sample.eth</div>
+    <nav>
+      <a href="#names" data-component="NavLink">Names</a>
+      <a href="#plans" data-component="NavLink">Profile</a>
+      <a href="#about" data-component="NavLink">Settings</a>
+    </nav>
+  </header>
+
+  <div class="wrap">
+    <section class="hero" data-component="Hero" id="names">
+      <h1>Your identity, onchain.</h1>
+      <p>Register a name and use it everywhere.</p>
+      <div class="search" data-component="SearchBar">
+        <input data-testid="name-input" placeholder="search for a name…" />
+        <button data-testid="search-btn">Search</button>
+      </div>
+    </section>
+
+    <div class="grid" id="plans">
+      <div class="card" data-component="PlanCard" data-testid="plan-basic">
+        <span class="badge">Popular</span>
+        <h3>1 year</h3>
+        <p>Register and renew yearly.</p>
+        <div class="price">0.012 ETH</div>
+        <button class="cta" data-testid="register-basic">Register</button>
+      </div>
+      <div class="card" data-component="PlanCard" data-testid="plan-pro">
+        <h3>3 years</h3>
+        <p>Lock in a longer term.</p>
+        <div class="price">0.032 ETH</div>
+        <button class="cta" data-testid="register-pro">Register</button>
+      </div>
+      <div class="card" data-component="PlanCard" data-testid="plan-max">
+        <h3>5 years</h3>
+        <p>Best value, fewer renewals.</p>
+        <div class="price">0.050 ETH</div>
+        <button class="cta" data-testid="register-max">Register</button>
+      </div>
+    </div>
+  </div>
+
+  <footer data-component="Footer" id="about">Sample app for the DQA overlay demo · not a real product</footer>
+
+  <!-- This single line is the entire integration. In your PR preview builds,
+       inject the same tag (preview only) and designers can comment on the live page.
+       ?issue= maps every comment on this page onto that ticket — your
+       linear/<ticket-id> branch convention can fill this in automatically. -->
+  <script type="module" src="/overlay.js?issue=ENG-123"></script>
+</body>
+</html>

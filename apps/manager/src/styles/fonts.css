@@ -1,0 +1,99 @@
+/* ===============================
+ * ABC Monument Grotesk
+ * ===============================
+ */
+@font-face {
+  font-family: "ABCMonumentGrotesk";
+  src: url("@/assets/fonts/abc-monument-grotesk-variable.woff2") format("woff2");
+}
+
+/* ===============================
+ * ABC Monument Grotesk Mono
+ * ===============================
+ */
+@font-face {
+  font-family: "ABCMonumentGroteskMono";
+  src: url("@/assets/fonts/ABCMonumentGroteskMono/abc-monument-grotesk-mono-regular.woff2")
+    format("woff2");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "ABCMonumentGroteskMono";
+  src: url("@/assets/fonts/ABCMonumentGroteskMono/abc-monument-grotesk-mono-regular-italic.woff2")
+    format("woff2");
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "ABCMonumentGroteskMono";
+  src: url("@/assets/fonts/ABCMonumentGroteskMono/abc-monument-grotesk-mono-medium.woff2")
+    format("woff2");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "ABCMonumentGroteskMono";
+  src: url("@/assets/fonts/ABCMonumentGroteskMono/abc-monument-grotesk-mono-medium-italic.woff2")
+    format("woff2");
+  font-weight: 500;
+  font-style: italic;
+}
+
+/* ===============================
+ * ABC Monument Grotesk Semi Mono
+ * ===============================
+ */
+@font-face {
+  font-family: "ABCMonumentGroteskSemiMono";
+  src: url("@/assets/fonts/ABCMonumentGroteskSemiMono/abc-monument-grotesk-semi-mono-regular.woff2")
+    format("woff2");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "ABCMonumentGroteskSemiMono";
+  src: url("@/assets/fonts/ABCMonumentGroteskSemiMono/abc-monument-grotesk-semi-mono-regular-italic.woff2")
+    format("woff2");
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "ABCMonumentGroteskSemiMono";
+  src: url("@/assets/fonts/ABCMonumentGroteskSemiMono/abc-monument-grotesk-semi-mono-medium.woff2")
+    format("woff2");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "ABCMonumentGroteskSemiMono";
+  src: url("@/assets/fonts/ABCMonumentGroteskSemiMono/abc-monument-grotesk-semi-mono-medium-italic.woff2")
+    format("woff2");
+  font-weight: 500;
+  font-style: italic;
+}
+
+/* ===============================
+ * ABC Marist
+ * ===============================
+ */
+@font-face {
+  font-family: "ABCMarist";
+  src: url("@/assets/fonts/ABCMarist/abc-marist-regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "ABCMarist";
+  src: url("@/assets/fonts/ABCMarist/abc-marist-regular-italic.woff2")
+    format("woff2");
+  font-weight: 400;
+  font-style: italic;
+}

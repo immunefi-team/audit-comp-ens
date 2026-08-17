@@ -1,0 +1,62 @@
+{
+  "name": "api-worker",
+  "type": "module",
+  "main": "src/worker.ts",
+  "exports": {
+    "./hc": {
+      "types": "./dist/src/hc.d.ts",
+      "default": "./dist/src/hc.js"
+    }
+  },
+  "scripts": {
+    "dev": "concurrently \"pnpm dev:vite\" \"pnpm dev:tsc\" --names \"vite,tsc\" --prefix-colors \"cyan,yellow\" --kill-others-on-fail --restart-tries 3 --restart-after 2000",
+    "dev:vite": "vite dev",
+    "dev:tsc": "tsgo -p tsconfig.build.json --watch --preserveWatchOutput",
+    "typecheck": "tsgo -p tsconfig.json --noEmit",
+    "build:types": "tsgo -p tsconfig.build.json --emitDeclarationOnly",
+    "build:vite": "vite build",
+    "build:tsc": "tsgo -p tsconfig.build.json",
+    "build": "pnpm build:vite && pnpm build:tsc",
+    "deploy": "pnpm build:vite && wrangler deploy",
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings worker-configuration.gen.d.ts",
+    "test": "vitest run",
+    "lint": "biome check"
+  },
+  "dependencies": {
+    "@block65/webcrypto-web-push": "^1.0.2",
+    "@ens-apps/shared-schema": "workspace:*",
+    "@ens-apps/utils": "workspace:*",
+    "@ensdomains/ensjs": "catalog:",
+    "@hono/valibot-validator": "^0.5.3",
+    "@neondatabase/serverless": "^1.0.2",
+    "drizzle-orm": "^0.45.2",
+    "graphql": "^16.11.0",
+    "graphql-request": "^7.2.0",
+    "hono": "^4.9.1",
+    "lucide": "^0.542.0",
+    "neverthrow": "^8.2.0",
+    "pg": "^8.16.3",
+    "ts-pattern": "^5.8.0",
+    "uuid": "^13.0.0",
+    "valibot": "^1.1.0",
+    "viem": "catalog:",
+    "workers-og": "^0.0.27"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "catalog:",
+    "@cloudflare/vitest-pool-workers": "^0.16.18",
+    "@grammyjs/types": "^3.22.2",
+    "@sendgrid/helpers": "^8.0.0",
+    "@types/node": "^24.3.1",
+    "@types/pg": "^8.15.5",
+    "@typescript/native-preview": "catalog:",
+    "concurrently": "^9.2.1",
+    "drizzle-kit": "^0.31.10",
+    "typescript": "catalog:typescript6",
+    "vite": "catalog:",
+    "vitest": "catalog:"
+  },
+  "imports": {
+    "#*": "./src/*"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "name": "@ens-apps/dev-time-travel",
+  "version": "1.0.0",
+  "description": "DEV-only manual time-travel tooling (Anvil clock control + panel) for the ENS apps.",
+  "type": "module",
+  "private": true,
+  "sideEffects": [
+    "./src/setup.ts"
+  ],
+  "exports": {
+    ".": "./src/index.ts",
+    "./setup": "./src/setup.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check"
+  },
+  "dependencies": {
+    "@ens-apps/utils": "workspace:*",
+    "viem": "catalog:"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "^5",
+    "react": "^19"
+  },
+  "devDependencies": {
+    "@tanstack/react-query": "^5.90.12",
+    "@types/react": "^19.2.7",
+    "react": "^19.2.5",
+    "typescript": "catalog:typescript6"
+  }
+}

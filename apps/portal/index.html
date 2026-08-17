@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="ENS Explorer App" />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="apple-touch-icon" href="/apple-icon-180x180.png" />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#007C20" />
+        <title>ENS Explorer App</title>
+    </head>
+
+    <body>
+        <script>
+            ;(() => {
+                const stored = localStorage.getItem('ens-portal-theme')
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+                if (stored === 'dark' || ((!stored || stored === 'system') && prefersDark)) {
+                    document.documentElement.classList.add('dark')
+                }
+            })()
+        </script>
+        <div id="app"></div>
+        <script type="module" src="/src/main.tsx"></script>
+    </body>
+</html>

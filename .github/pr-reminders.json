@@ -1,0 +1,36 @@
+{
+  "$comment": "Config for .github/workflows/pr-reminders.yml \u2014 the run schedule itself is the cron in that workflow.",
+  "qaLabel": "QA Requested",
+  "$qaEngineersComment": "GitHub logins (resolved via slackUserMap) tagged once on the missing-QA-label section.",
+  "qaEngineers": [
+    "laurgk",
+    "sugh01"
+  ],
+  "minAgeHoursForReviewNag": 24,
+  "ignoreLabels": [
+    "DO NOT MERGE",
+    "automated"
+  ],
+  "ignoreAuthors": [
+    "dependabot",
+    "app/dependabot",
+    "github-actions",
+    "app/github-actions"
+  ],
+  "$slackUserMapComment": "GitHub login -> Slack member ID (Slack profile -> three dots -> Copy member ID). Unmapped logins fall back to their plain GitHub handle.",
+  "slackUserMap": {
+    "Malak67": "U09LAPX5Z97",
+    "laurgk": "U08GUH7C10D",
+    "v1rtl": "U06CG1ZGVM2",
+    "f1lander": "U08MFNKN5MG",
+    "Chakravarthy7102": "U0ACT8B7N8K",
+    "bigint": "U09RPE550CV",
+    "LeonmanRolls": "U04AJ188UGL",
+    "sugh01": "U05T533R81X",
+    "svemat01": "U08ACHJGQAX"
+  },
+  "ignoreTitlePatterns": [
+    "DO NOT MERGE",
+    "WIP"
+  ]
+}

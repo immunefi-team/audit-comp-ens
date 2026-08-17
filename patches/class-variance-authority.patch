@@ -1,0 +1,56 @@
+diff --git a/dist/index.d.ts b/dist/index.d.ts
+index 419fb31fd5b1f269a5e2fcce142c530099589991..be29fb05b89b59e6a846d418653fb90af510d80f 100644
+--- a/dist/index.d.ts
++++ b/dist/index.d.ts
+@@ -32,5 +32,5 @@ type Config<T> = T extends ConfigSchema ? {
+     compoundVariants?: (T extends ConfigSchema ? (ConfigVariants<T> | ConfigVariantsMulti<T>) & ClassProp : ClassProp)[];
+ } : never;
+ type Props<T> = T extends ConfigSchema ? ConfigVariants<T> & ClassProp : ClassProp;
+-export declare const cva: <T>(base?: ClassValue, config?: Config<T>) => (props?: Props<T>) => string;
++export declare const cva: <T>(base?: ClassValue, config?: Config<T>) => ((props?: Props<T>) => string) & { $variants: T };
+ export {};
+diff --git a/dist/index.js b/dist/index.js
+index dbfa5e83eca95fe6d2e1c5d162d44a541d1d26a5..c7463a258f48db12022eff6c399761566b540120 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -33,7 +33,8 @@ _export(exports, {
+ const _clsx = require("clsx");
+ const falsyToString = (value)=>typeof value === "boolean" ? `${value}` : value === 0 ? "0" : value;
+ const cx = _clsx.clsx;
+-const cva = (base, config)=>(props)=>{
++const cva = (base, config)=>{
++    const result = (props)=>{
+         var _config_compoundVariants;
+         if ((config === null || config === void 0 ? void 0 : config.variants) == null) return cx(base, props === null || props === void 0 ? void 0 : props.class, props === null || props === void 0 ? void 0 : props.className);
+         const { variants, defaultVariants } = config;
+@@ -71,4 +72,6 @@ const cva = (base, config)=>(props)=>{
+         }, []);
+         return cx(base, getVariantClassNames, getCompoundVariantClassNames, props === null || props === void 0 ? void 0 : props.class, props === null || props === void 0 ? void 0 : props.className);
+     };
+-
++    result.$variants = config?.variants;
++    return result;
++};
+diff --git a/dist/index.mjs b/dist/index.mjs
+index a255f0392dadd47b7cfc394198b70136de4986b7..42aa762834d0562244359ecf65b9dff3dce2c02c 100644
+--- a/dist/index.mjs
++++ b/dist/index.mjs
+@@ -15,7 +15,9 @@
+  */ import { clsx } from "clsx";
+ const falsyToString = (value)=>typeof value === "boolean" ? `${value}` : value === 0 ? "0" : value;
+ export const cx = clsx;
+-export const cva = (base, config)=>(props)=>{
++// add $variants to the result
++export const cva = (base, config)=>{
++    const result = (props)=>{
+         var _config_compoundVariants;
+         if ((config === null || config === void 0 ? void 0 : config.variants) == null) return cx(base, props === null || props === void 0 ? void 0 : props.class, props === null || props === void 0 ? void 0 : props.className);
+         const { variants, defaultVariants } = config;
+@@ -53,4 +55,6 @@ export const cva = (base, config)=>(props)=>{
+         }, []);
+         return cx(base, getVariantClassNames, getCompoundVariantClassNames, props === null || props === void 0 ? void 0 : props.class, props === null || props === void 0 ? void 0 : props.className);
+     };
+-
++    result.$variants = config?.variants;
++    return result;
++};

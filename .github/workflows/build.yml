@@ -1,0 +1,106 @@
+name: Build Verification
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build-changed-apps:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          # Fetch all history for change detection
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "lts/*"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Determine base ref
+        id: base
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "ref=origin/${BASE_REF}" >> $GITHUB_OUTPUT
+          else
+            echo "ref=origin/main" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Detect changed packages
+        id: changed
+        run: |
+          echo "🔍 Detecting changed packages..."
+          CHANGED_PACKAGES=$(pnpm --filter="[${{ steps.base.outputs.ref }}]" list --depth=-1 --json | jq -r '.[].name' | tr '\n' ' ')
+          echo "Changed packages: $CHANGED_PACKAGES"
+          echo "packages=$CHANGED_PACKAGES" >> $GITHUB_OUTPUT
+
+          # Check if any apps changed
+          if echo "$CHANGED_PACKAGES" | grep -q "portal\|manager"; then
+            echo "has_apps=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_apps=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Type check changed packages
+        run: |
+          echo "🔍 Type checking changed packages and their dependents..."
+          pnpm --filter="...[${{ steps.base.outputs.ref }}]" --if-present typecheck
+
+      - name: Build changed apps
+        if: steps.changed.outputs.has_apps == 'true'
+        env:
+          VITE_RHINESTONE_API_KEY: ${{ vars.VITE_RHINESTONE_API_KEY }}
+        run: |
+          echo "🏗️ Building changed apps and dependents..."
+          pnpm --filter="...[${{ steps.base.outputs.ref }}]" --if-present build
+
+      - name: Build all apps (fallback)
+        if: steps.changed.outputs.has_apps == 'false'
+        env:
+          VITE_RHINESTONE_API_KEY: ${{ vars.VITE_RHINESTONE_API_KEY }}
+        run: |
+          echo "🏗️ No apps changed, building all apps..."
+          pnpm --filter=portal --filter=manager --if-present build
+
+      - name: Verify build outputs
+        run: |
+          echo "✅ Verifying build outputs..."
+
+          # Check portal build
+          if [ -d "apps/portal/dist" ]; then
+            echo "✅ Portal build successful"
+            echo "📁 Portal build size: $(du -sh apps/portal/dist | cut -f1)"
+          else
+            echo "❌ Portal build failed - dist directory not found"
+          fi
+
+          # Check manager build
+          if [ -d "apps/manager/dist" ]; then
+            echo "✅ Manager build successful"
+            echo "📁 Manager build size: $(du -sh apps/manager/dist | cut -f1)"
+          else
+            echo "❌ Manager build failed - dist directory not found"
+          fi
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v7
+        if: github.event_name == 'push'
+        with:
+          name: build-artifacts
+          path: |
+            apps/portal/dist/
+            apps/manager/dist/
+          retention-days: 7

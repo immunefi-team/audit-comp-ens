@@ -1,0 +1,61 @@
+{
+  "$schema": "../../node_modules/@biomejs/biome/configuration_schema.json",
+  "assist": {
+    "actions": {
+      "source": {
+        "useSortedAttributes": "on",
+        "useSortedProperties": "on"
+      }
+    }
+  },
+  "extends": "//",
+  "files": {
+    "includes": [
+      "./**",
+      "!**/node_modules",
+      "!**/public",
+      // SVG assets are static image files, not source code.
+      // Biome parses them as JSX/HTML and emits noise (parse errors,
+      // a11y/noSvgWithoutTitle, useSortedAttributes). Exclude them.
+      "!**/*.svg",
+      // Generated files
+      "!**/*.gen.ts",
+      "!**/*.gen.d.ts",
+      // Build & Temp files
+      "!**/.tanstack",
+      "!!**/.output",
+      "!!**/.nitro",
+      "!!**/.wrangler"
+    ]
+  },
+  "linter": {
+    "rules": {
+      "complexity": {
+        "noForEach": "warn",
+        "noUselessFragments": "error"
+      },
+      "correctness": {
+        "noUnusedImports": {
+          "fix": "safe",
+          "level": "error"
+        },
+        "noUnusedVariables": "error"
+      },
+      "nursery": {
+        "useSortedClasses": {
+          "fix": "safe",
+          "level": "error",
+          "options": {
+            "functions": ["cn", "cva", "clsx"]
+          }
+        }
+      },
+      "style": {
+        "noNegationElse": "error",
+        "noUnusedTemplateLiteral": "error",
+        "noUselessElse": "error"
+      }
+    }
+  },
+  "root": false
+}

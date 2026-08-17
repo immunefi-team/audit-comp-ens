@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "declaration": true,
+    "declarationMap": true
+  },
+  "include": [
+    "src/hc.ts",
+    "src/types/index.ts",
+    "worker-configuration.gen.d.ts"
+  ]
+  // "include": ["src/hc.ts", "worker-configuration.gen.d.ts", "src/**/*"]
+}

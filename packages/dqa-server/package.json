@@ -1,0 +1,29 @@
+{
+  "name": "@ens-apps/dqa-server",
+  "version": "1.0.0",
+  "description": "DQA overlay service: comment persistence, image upload, live cursor relay, Linear OAuth + push. Serves the overlay bundle (client/overlay.js, built by Vite into dist/) for injection into QA/preview builds. Server TypeScript runs directly under Node's native type stripping.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "trap 'kill 0' EXIT; vite build --watch & node --watch server/index.ts",
+    "start": "node server/index.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check",
+    "build": "vite build"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "dependencies": {
+    "@hono/node-server": "^2.1.0",
+    "hono": "^4.12.18",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/ws": "^8.5.13",
+    "html-to-image": "1.11.13",
+    "typescript": "catalog:typescript6",
+    "vite": "^8.0.10"
+  }
+}

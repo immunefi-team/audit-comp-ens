@@ -1,0 +1,64 @@
+name: Security Scanning
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  schedule:
+    # Run weekly on Sundays at 2 AM UTC
+    - cron: "0 2 * * 0"
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          # Fetch all history for change detection
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "lts/*"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Show changed packages (for reference)
+        run: |
+          echo "🔍 Changed packages (for reference):"
+          if [ "${{ github.event_name }}" == "schedule" ]; then
+            echo "📅 Scheduled run - scanning all packages"
+          else
+            pnpm --filter="[origin/main]" list --depth=-1 || echo "No packages changed"
+          fi
+
+      - name: Run npm audit on all packages
+        run: |
+          echo "🔒 Running npm audit on all packages..."
+          pnpm audit --audit-level moderate
+
+      # - name: Run Snyk security scan
+      #   uses: snyk/actions/node@master
+      #   continue-on-error: true
+      #   env:
+      #     SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      #   with:
+      #     args: --severity-threshold=high
+
+      - name: Run CodeQL analysis
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3

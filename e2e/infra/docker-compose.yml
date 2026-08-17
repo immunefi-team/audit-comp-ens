@@ -1,0 +1,290 @@
+# Local E2E stack: Anvil (Sepolia fork) + Alto (ERC-4337 bundler) + optional mock paymaster.
+# Use when running E2E tests on the fork so the bundler uses the same chain.
+#
+# Start:   docker compose -f e2e/infra/docker-compose.yml up -d
+# Stop:    docker compose -f e2e/infra/docker-compose.yml down
+#
+# Then set in the app (or .env):
+#   VITE_SEPOLIA_RPC_URL=http://127.0.0.1:8545
+#   VITE_PIMLICO_BUNDLER_URL=http://localhost:3000/alto  (proxy avoids CORS; see vite.config.ts)
+#
+# Optional: override fork URL (e.g. for CI)
+#   SEPOLIA_FORK_URL=https://ethereum-sepolia-rpc.publicnode.com
+#
+# Paymaster is optional; host port 3002 to avoid clashing with app.
+#
+# ── Why some images are pinned by digest ──────────────────────────────────────
+# CI runs on throwaway runners, so every job pulls its images fresh. Any service
+# left on a moving tag therefore ships a *different build on every run*, and an
+# upstream push can turn CI red with no change in this repo.
+#
+# `ghcr.io/foundry-rs/foundry:latest` is a nightly that upstream rebuilds per
+# master commit (the registry carries ~1250 `nightly-<sha>` tags), so `:latest`
+# moves several times a day and two CI runs an hour apart can get different
+# anvils. A newer nightly breaks the path the mockestrator uses to fill an
+# intent: it fills one by impersonating the smart account and firing one
+# `eth_sendTransaction` per call in the batch. Measured on a clean fork with
+# identical repo code and the same mockestrator image, manager shard 3/3:
+#
+#   anvil 1.7.1            (the pin below)  — all 6 calls mined, 3/3 tests pass
+#   anvil 1.8.0-nightly    (56b854e401f5748989d346f0aea871bac5d3e266,
+#                           `:latest` on 2026-08-12) — only the first 3 calls
+#                           mined; calls 4-6 were handed a transaction hash and
+#                           then dropped (unknown to the node, empty txpool,
+#                           funded account, negligible base fee, no error
+#                           anywhere), and the test hung
+#
+# The mockestrator still reports the intent COMPLETED, carrying the last call's
+# hash, so the app waits forever for a receipt that will never exist and the
+# registration flow parks on "Waiting for the registration transaction". That is
+# what made `registration.spec.ts` "registers a name after connecting from the
+# pricing page" fail intermittently from 2026-08-06 onwards: the outcome tracked
+# whichever nightly the runner happened to pull, which is why no commit bisects
+# it. Which anvil release first regressed this was not bisected.
+#
+# Anvil and the mockestrator are therefore pinned to digests verified green.
+# Alto, the paymaster and Panoptes are deliberately left on moving tags for now:
+# the standalone-HCA path does not route through the bundler or paymaster, and
+# CI mocks the indexer (E2E_MOCK_INDEXER=true). Pin them too if they ever drift.
+#
+# To bump a pin:
+#   1. docker pull <image>:<tag>
+#   2. docker inspect --format '{{index .RepoDigests 0}}' <image>:<tag>
+#      (that is the multi-arch index digest — it works on CI amd64 and arm64 dev
+#      machines alike; do NOT use a per-architecture manifest digest)
+#   3. Put the digest below, run the manager E2E shards locally, and record the
+#      resolved version in the trailing comment so the pin stays legible.
+
+services:
+  anvil:
+    # anvil 1.7.1 (Commit SHA 4072e48705af9d93e3c0f6e29e93b5e9a40caed8).
+    # Do not move this to `:latest` — see the note above.
+    image: ghcr.io/foundry-rs/foundry@sha256:8347b728d5d393dac1c018691b36f506d23b9dcd78341d40ea0fcb11c3a19cdd
+    networks:
+      e2e:
+        aliases:
+          - anvil
+    # The Foundry image entrypoint is "/bin/sh -c" which swallows list-style
+    # command args.  Override to call anvil directly so all flags are passed.
+    entrypoint: ["anvil"]
+    command:
+      - --fork-url
+      - ${SEPOLIA_FORK_URL:-https://lb.drpc.live/sepolia/AnmpasF2C0JBqeAEzxVO8aTDnH6wviUR8JD3QmlfqV1j}
+      - --chain-id
+      - "11155111"
+      - --port
+      - "8545"
+      - --host
+      - "0.0.0.0"
+    ports:
+      - "8545:8545"
+    healthcheck:
+      # eth_chainId ensures RPC is ready for Alto; start_period gives fork time to init
+      test: ["CMD", "cast", "rpc", "eth_chainId"]
+      interval: 5s
+      timeout: 10s
+      retries: 6
+      start_period: 20s
+
+  alto:
+    image: ghcr.io/pimlicolabs/alto:latest
+    networks:
+      e2e:
+        aliases:
+          - alto
+    ports:
+      - "4337:4337"
+    entrypoint: ["sh", "-c"]
+    environment:
+      ANVIL_RPC: http://anvil:8545
+    command:
+      - "node /app/wait-for-anvil.mjs && exec node src/lib/cli/alto.js run --config /app/alto-config.json"
+    depends_on:
+      anvil:
+        condition: service_healthy
+    volumes:
+      - ./alto/alto-config.json:/app/alto-config.json
+      - ./alto/wait-for-anvil.mjs:/app/wait-for-anvil.mjs
+      - ./alto/healthcheck.mjs:/app/healthcheck.mjs
+    restart: on-failure
+    healthcheck:
+      test: ["CMD", "node", "/app/healthcheck.mjs"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  # Mock verifying paymaster: sponsors gas on the fork (no ETH needed in smart account).
+  # Resolve hostname "anvil" to host so any anvil:8545 request (env or lib fallback) hits host's published port.
+  paymaster:
+    image: ghcr.io/pimlicolabs/mock-verifying-paymaster:main
+    networks:
+      e2e:
+        aliases:
+          - paymaster
+    ports:
+      - "3002:3000"
+    environment:
+      ALTO_RPC: http://alto:4337
+      ANVIL_RPC: http://anvil:8545
+    depends_on:
+      anvil:
+        condition: service_healthy
+      alto:
+        condition: service_healthy
+    restart: on-failure
+
+  # Panoptes ENS Indexer: indexes ENS V2 events from the Anvil fork.
+  # Provides a GraphQL API on port 5655 for domain lookups, dashboard, etc.
+  panoptes-indexer:
+    image: ghcr.io/mdtanrikulu/panoptes:latest
+    networks:
+      e2e:
+        aliases:
+          - panoptes-indexer
+    command: ["/app/ensv2-indexer-v2"]
+    volumes:
+      - panoptes-data:/app/data
+      - ${PANOPTES_CONTRACTS_FILE:-./panoptes/contracts.json}:/app/config/contracts.json:ro
+    environment:
+      - DATABASE_PATH=/app/data/ens_v2.db
+      - RAINBOW_PATH=/app/data/ens_rainbow.db
+      - RPC_URL=http://anvil:8545
+      - NETWORK=sepolia
+      - CONTRACTS_PATH=/app/config/contracts.json
+      - BATCH_SIZE=10000
+      - POLL_INTERVAL=2
+      - RATE_LIMIT_PER_SECOND=100
+      - STATUS_PORT=3001
+      - WEBHOOKS_ENABLED=false
+    depends_on:
+      anvil:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "/app/healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: on-failure
+
+  panoptes-api:
+    image: ghcr.io/mdtanrikulu/panoptes:latest
+    networks:
+      e2e:
+        aliases:
+          - panoptes-api
+    command: ["/app/api-entrypoint.sh"]
+    ports:
+      - "5655:5655"
+    volumes:
+      - panoptes-data:/app/data:ro
+      - ${PANOPTES_CONTRACTS_FILE:-./panoptes/contracts.json}:/app/config/contracts.json:ro
+    environment:
+      - DATABASE_PATH=/app/data/ens_v2.db
+      - RAINBOW_PATH=/app/data/ens_rainbow.db
+      - DOWNLOAD_RAINBOW=false
+      - NETWORK=sepolia
+      - CONTRACTS_PATH=/app/config/contracts.json
+      - RPC_URL=http://anvil:8545
+      - API_PORT=5655
+      - GRAPHQL_MAX_DEPTH=10
+      - GRAPHQL_MAX_COST=1000
+      - WEBHOOKS_ENABLED=false
+      - METRICS_ENABLED=false
+    depends_on:
+      - panoptes-indexer
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5655/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: on-failure
+
+  # Rhinestone mockestrator: local orchestrator for Rhinestone intent-based transactions.
+  # Only needed when running the standalone-HCA e2e tests (VITE_FF_USE_EOA=false).
+  mockestrator:
+    # ENS fork of the Rhinestone mockestrator, pinned so the orchestrator stand-in
+    # cannot drift underneath the patched @rhinestone/sdk. This digest is the
+    # build `:latest` has resolved to since 2026-06-07, so pinning it is a no-op
+    # today and only stops a future push from silently changing CI.
+    image: ghcr.io/ensdomains/mockestrator@sha256:d30d9328d774e15a77f107e02733379078b1806d72598d4ffa151d8b507550ba
+    networks:
+      e2e:
+        aliases:
+          - mockestrator
+    ports:
+      - "3007:3000"
+    depends_on:
+      anvil:
+        condition: service_healthy
+    volumes:
+      - ./mockestrator/rpcs.json:/app/rpcs.json
+      - ./mockestrator/chains.json:/app/chains.json
+    restart: on-failure
+    healthcheck:
+      # nc is available in the Bun-based image; curl is not. We send a real
+      # HTTP request so the check only passes once the HTTP server responds,
+      # not just when the TCP port is open.
+      test: ["CMD-SHELL", "printf 'GET / HTTP/1.0\\r\\nHost: localhost\\r\\n\\r\\n' | nc -w 2 localhost 3000 | grep -q 'HTTP'"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+
+  # DQA overlay service (packages/dqa-server): design-review comments pinned to
+  # live pages, live cursors, "Sign in with Linear" + push-to-Linear.
+  # Apps opt in at build time with VITE_DQA=1 + VITE_DQA_URL=http://localhost:4000
+  # (QA / PR previews only — never production). See e2e/docs/dqa-overlay.md.
+  # With no LINEAR_* env set it runs in dev mode (local sign-in, dry-run pushes).
+  dqa:
+    build:
+      context: ../../packages/dqa-server
+    networks:
+      e2e:
+        aliases:
+          - dqa
+    ports:
+      - "4000:4000"
+    environment:
+      - PORT=4000
+      - LINEAR_CLIENT_ID=${LINEAR_CLIENT_ID:-}
+      - LINEAR_CLIENT_SECRET=${LINEAR_CLIENT_SECRET:-}
+      - LINEAR_REDIRECT_URI=${LINEAR_REDIRECT_URI:-http://localhost:4000/auth/callback}
+      # `write` is required for screenshot uploads (fileUpload) and creating
+      # sub-issues/triage issues — `comments:create` alone is not enough.
+      - LINEAR_SCOPES=${LINEAR_SCOPES:-read,write}
+      - LINEAR_ACTOR=${LINEAR_ACTOR:-user}
+      - LINEAR_WORKSPACE_ID=${LINEAR_WORKSPACE_ID:-}
+      - LINEAR_ALLOWED_TEAM_IDS=${LINEAR_ALLOWED_TEAM_IDS:-}
+      - LINEAR_ALLOWED_PROJECT_IDS=${LINEAR_ALLOWED_PROJECT_IDS:-}
+      - SESSION_SECRET=${DQA_SESSION_SECRET:-}
+      - TOKEN_ENCRYPTION_KEY=${DQA_TOKEN_ENCRYPTION_KEY:-}
+      - DQA_DEV_AUTH=${DQA_DEV_AUTH:-false}
+      - LINEAR_API_KEY=${LINEAR_API_KEY:-}
+      - LINEAR_TEAM_ID=${LINEAR_TEAM_ID:-}
+      - LINEAR_LABEL_ID=${LINEAR_LABEL_ID:-}
+      - LINEAR_DRY_RUN=${LINEAR_DRY_RUN:-true}
+    volumes:
+      - dqa-data:/app/data
+      # Live-mount static assets (overlay.js) so local edits don't require an
+      # image rebuild. Server code changes still need: up -d --build dqa
+      - ../../packages/dqa-server/public:/app/public:ro
+    restart: on-failure
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:4000/auth/config"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  panoptes-data:
+    driver: local
+  dqa-data:
+    driver: local
+
+networks:
+  e2e:
+    name: ens-e2e

@@ -1,0 +1,97 @@
+name: Claude Code from Linear
+
+on:
+  # Triggered by the Cloudflare Worker bridge
+  repository_dispatch:
+    types: [linear-ticket]
+
+  # Allow @claude mentions directly on PRs for follow-up
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  id-token: write
+
+jobs:
+  claude:
+    # Run if: dispatch from Linear, OR @claude mentioned in a comment
+    if: |
+      github.event_name == 'repository_dispatch' ||
+      (
+        github.event_name == 'issue_comment' &&
+        contains(github.event.comment.body, '@claude')
+      ) ||
+      (
+        github.event_name == 'pull_request_review_comment' &&
+        contains(github.event.comment.body, '@claude')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Run Claude Code
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          trigger_phrase: "@claude"
+          claude_args: "--dangerously-skip-permissions --model opus"
+
+          prompt: |
+            ${{
+              github.event_name == 'repository_dispatch' &&
+              !github.event.client_payload.followup &&
+              format(
+                'Implement the following task and create a PR when done.\n\nTitle: {0}\nDescription: {1}\nLinear Ticket: {2}\nProject: {3}\n\nUse branch name: claude/{2}\n\nIMPORTANT: The Project name indicates which app in the monorepo to work in. The project name contains the app folder name (e.g. "Manager v4 beta" means work in apps/manager/). Only modify files in the relevant app directory unless shared code changes are genuinely needed.\n\nDo NOT include the raw description in the PR body. Write a concise summary of what you implemented instead.',
+                github.event.client_payload.title,
+                github.event.client_payload.description,
+                github.event.client_payload.ticket_id,
+                github.event.client_payload.project,
+                github.event.client_payload.team
+              ) || ''
+            }}
+            ${{
+              github.event_name == 'repository_dispatch' &&
+              github.event.client_payload.followup &&
+              format(
+                'You have an existing PR on branch claude/{0}. Check out that branch and apply the following changes:\n\nFeedback: {1}\n\nPush commits to the existing branch. Do NOT create a new PR.',
+                github.event.client_payload.ticket_id,
+                github.event.client_payload.feedback
+              ) || ''
+            }}
+            ${{
+              (github.event_name == 'issue_comment' || github.event_name == 'pull_request_review_comment') &&
+              format(
+                'You are on PR #{0}. Apply the following changes and push a commit:\n\n{1}\n\nDo NOT create a new PR. Push to the existing branch.',
+                github.event.issue.number || github.event.pull_request.number,
+                github.event.comment.body
+              ) || ''
+            }}
+
+      # Optional: update Linear ticket status after PR is created
+      - name: Update Linear ticket to In Review
+        if: |
+          success() &&
+          github.event_name == 'repository_dispatch' &&
+          !github.event.client_payload.followup
+        env:
+          LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
+          TICKET_ID: ${{ github.event.client_payload.ticket_id }}
+        run: |
+          # Update Linear ticket status to "In Review" after PR creation
+          #
+          curl -s -X POST https://api.linear.app/graphql \
+            -H "Authorization: $LINEAR_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"query\": \"mutation { issueUpdate(id: \\\"$TICKET_ID\\\", input: { stateId: \\\"f404d20f-cc26-4174-8617-44501a652be9\\\" }) { success } }\"
+            }"

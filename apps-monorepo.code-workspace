@@ -1,0 +1,38 @@
+{
+  "folders": [
+    {
+      "path": ".",
+      "name": "Project Root",
+    },
+    {
+      "path": "apps/manager",
+      "name": "Manager App"
+    },
+    {
+      "path": "apps/portal",
+      "name": "Portal App"
+    },
+    {
+      "path": "packages",
+      "name": "Packages"
+    },
+    {
+      "path": "workers/api-worker",
+      "name": "API Worker"
+    },
+  ],
+  "settings": {
+    // Required for biome to work in multi-root workspaces
+    "biome.enabled": false,
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "i18n-ally.localesPaths": [
+      "packages/locales",
+      "packages/locales/locales"
+    ],
+    "editor.codeActionsOnSave": {
+      "source.organizeImports.biome": "explicit",
+      "source.fixAll.biome": "explicit"
+    },
+    "tailwindCSS.classFunctions": ["cva", "clsx", "cn", "tw", "twm"],
+  }
+}

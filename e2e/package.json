@@ -1,0 +1,28 @@
+{
+  "name": "@ens-apps/e2e",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:manager": "playwright test --config=projects/manager/playwright.config.ts",
+    "test:manager-premium": "playwright test --config=projects/manager/playwright.premium.config.ts",
+    "test:portal": "playwright test --config=projects/portal/playwright.config.ts",
+    "test:cross-app": "playwright test --config=projects/cross-app/playwright.config.ts",
+    "infra:up": "bash infra/scripts/start-local-env.sh",
+    "infra:down": "bash infra/scripts/start-local-env.sh --down",
+    "seed:name": "tsx scripts/seed-name.ts",
+    "seed:premium": "tsx scripts/seed-temp-premium.ts",
+    "seed:managed-name": "tsx scripts/seed-managed-name.ts",
+    "lint": "biome check"
+  },
+  "postinstall": "playwright install --with-deps chromium",
+  "dependencies": {
+    "@ensdomains/ensjs": "catalog:",
+    "@ensdomains/ensjs-abi": "catalog:",
+    "@ensdomains/headless-web3-provider": "^1.0.8",
+    "viem": "catalog:"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.58.2",
+    "tsx": "^4.20.6"
+  }
+}

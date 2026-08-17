@@ -1,0 +1,33 @@
+{
+  "_comment": "ENSjs-v2 Sepolia contract addresses for local Panoptes indexer. Mount as CONTRACTS_PATH=/app/config/contracts.json",
+
+  "temporary_registrar": "0x0000000000000000000000000000000000000000",
+  "old_ens_registry": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
+  "old_public_resolver": "0x0000000000000000000000000000000000000000",
+  "ens_registry": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
+  "base_registrar": "0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85",
+  "eth_registrar_controller": "0xfb3ce5d01e0f33f41dbb39035db9745962f1f968",
+  "public_resolver": "0xE99638b40E4Fff0129D56f03b55b6bbC4BBE49b5",
+  "reverse_registrar": "0xA0a1AbcDAe1a2a4A2EF8e9113Ff0e02DD81DC0C6",
+  "name_wrapper": "0x0635513f179D50A207757E05759CbD106d7dFcE8",
+
+  "root_registry": "0xdedb92913a25abe1f7bcdd85d8a344a43b398b67",
+  "eth_registry": "0xdedb92913a25abe1f7bcdd85d8a344a43b398b67",
+  "registry_datastore": "0x5a9236e72a66d3e08b83dcf489b4d850792b6009",
+  "eth_reverse_registrar": "0xA0a1AbcDAe1a2a4A2EF8e9113Ff0e02DD81DC0C6",
+
+  "l2_eth_registry": "0xdedb92913a25abe1f7bcdd85d8a344a43b398b67",
+  "l2_eth_registrar": "0x8c2e866b439358c41ae05de9cbe8a00bfefaffca",
+  "l2_registry_datastore": "0x5a9236e72a66d3e08b83dcf489b4d850792b6009",
+
+  "migration_helper": "0x0000000000000000000000000000000000000000",
+  "locked_migration_controller": "0x0000000000000000000000000000000000000000",
+  "unlocked_migration_controller": "0x0000000000000000000000000000000000000000",
+
+  "v1_deployment_block": 0,
+  "l1_deployment_block": 0,
+  "l2_deployment_block": 10921984,
+  "temp_registrar_start_block": 0,
+  "v1_migration_block": 0,
+  "name_wrapper_deployment_block": 0
+}

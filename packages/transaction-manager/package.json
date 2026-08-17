@@ -1,0 +1,44 @@
+{
+  "name": "@ens-apps/transaction-manager",
+  "version": "0.1.0",
+  "description": "Transaction management library for ENS applications",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./abis/*": "./src/contracts/abis/*",
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check"
+  },
+  "dependencies": {
+    "@ens-apps/smart-account": "workspace:*",
+    "@ens-apps/utils": "workspace:*",
+    "@ensdomains/address-encoder": "^1.1.2",
+    "@ensdomains/ensjs": "catalog:",
+    "@ensdomains/ensjs-abi": "catalog:",
+    "@rhinestone/sdk": "catalog:",
+    "@xstate/react": "^4.0.0-beta.12",
+    "idb": "^8.0.3",
+    "neverthrow": "^8.1.1",
+    "valibot": "^1.2.0",
+    "viem": "catalog:",
+    "xstate": "catalog:"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "^5.87.1",
+    "react": "^18.0.0 || ^19.0.0",
+    "wagmi": "^3.0.2"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.6",
+    "react": "^19.2.5",
+    "typescript": "catalog:typescript6",
+    "vitest": "catalog:",
+    "wagmi": "catalog:"
+  }
+}

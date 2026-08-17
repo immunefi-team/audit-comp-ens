@@ -1,0 +1,22 @@
+{
+  "ignore": [
+    "apps/portal/src/utils/themeSetup.js",
+    "**/*.gen.ts",
+    "**/dist/**",
+    "**/node_modules/**"
+  ],
+  "ignoreDependencies": [
+    "omnipin",
+    "@vitest/coverage-v8",
+    "@storybook/react-vite",
+    "storybook"
+  ],
+  "workspaces": {
+    "apps/*": {
+      "ignore": ["**/*.gen.ts", "**/dist/**"]
+    },
+    "packages/*": {
+      "ignore": ["**/*.gen.ts", "**/dist/**"]
+    }
+  }
+}

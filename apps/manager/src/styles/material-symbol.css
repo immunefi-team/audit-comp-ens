@@ -1,0 +1,199 @@
+/**
+ * Material Symbols Tailwind Utilities
+ *
+ * This file provides Tailwind utility classes for controlling Material Symbols icons.
+ * All utilities support Tailwind modifiers (hover:, focus:, md:, lg:, etc.) for responsive
+ * and interactive styling.
+ *
+ * Available utilities:
+ * - ms-font-*: Change font variant (outlined, rounded, sharp)
+ * - ms-wght-*: Set font weight (100-700 or any integer)
+ * - ms-fill: Toggle filled style (sets fill to 1)
+ * - ms-fill-*: Set fill value (0-1, decimal numbers)
+ * - ms-grade-*: Set grade (dark, normal, emphasis, or any integer)
+ * - ms-opsz-*: Set optical size (20, 24, 40, 48, or any integer)
+ *
+ * @example
+ * ```tsx
+ * // Weight utilities with modifiers
+ * <MSymbol symbol="notifications" className="ms-wght-400 hover:ms-wght-700" />
+ * <MSymbol symbol="drafts" className="ms-wght-300 md:ms-wght-500 lg:ms-wght-600" />
+ *
+ * // Fill utilities
+ * <MSymbol symbol="notifications" className="hover:ms-fill" />
+ * <MSymbol symbol="drafts" className="ms-fill-0.5 hover:ms-fill-1" />
+ *
+ * // Grade utilities
+ * <MSymbol symbol="notifications" className="ms-grade-normal hover:ms-grade-emphasis" />
+ * <MSymbol symbol="drafts" className="ms-grade-100 focus:ms-grade-200" />
+ *
+ * // Optical size utilities (responsive sizing)
+ * <MSymbol symbol="notifications" className="ms-opsz-20 md:ms-opsz-24 lg:ms-opsz-40" />
+ * <MSymbol symbol="drafts" className="ms-opsz-24 hover:ms-opsz-48" />
+ *
+ * // Combining utilities
+ * <MSymbol
+ *   symbol="notifications"
+ *   className="ms-wght-400 ms-opsz-24 hover:ms-wght-700 hover:ms-fill focus:ms-grade-emphasis"
+ * />
+ * ```
+ */
+
+@theme {
+  /* Font variant CSS variables */
+  --ms-font-outlined: "Material Symbols Outlined";
+  --ms-font-rounded: "Material Symbols Rounded";
+  --ms-font-sharp: "Material Symbols Sharp";
+  --default-ms-font: var(--ms-font-outlined, "Material Symbols Outlined");
+
+  /* Font weight CSS variables (100-700) */
+  --ms-weight-100: 100;
+  --ms-weight-200: 200;
+  --ms-weight-300: 300;
+  --ms-weight-400: 400;
+  --ms-weight-500: 500;
+  --ms-weight-600: 600;
+  --ms-weight-700: 700;
+  --default-ms-weight: var(--ms-weight-200, 200);
+
+  /* Fill default (0 = outlined, 1 = filled) */
+  --default-ms-fill: 0;
+
+  /* Grade CSS variables (controls icon emphasis/thickness) */
+  --ms-grade-dark: -25;
+  --ms-grade-normal: 0;
+  --ms-grade-emphasis: 200;
+  --default-ms-grade: var(--ms-grade-normal, 0);
+
+  /* Optical size CSS variables (controls icon size) */
+  --ms-optical-size-20: 20;
+  --ms-optical-size-24: 24;
+  --ms-optical-size-40: 40;
+  --ms-optical-size-48: 48;
+  --default-ms-optical-size: var(--ms-optical-size-24, 24);
+}
+
+/**
+ * Base Material Symbol utility class.
+ * This class applies the Material Symbols font and sets up the necessary
+ * CSS properties for variable font rendering. All Material Symbol icons
+ * should use this base class.
+ */
+@utility material-symbol {
+  display: inline-block;
+  font-family: var(--ms-font, var(--default-ms-font)), var(--default-ms-font);
+  font-size: calc(var(--ms-optical-size, var(--default-ms-optical-size)) * 1px);
+  font-variation-settings:
+    "wght" var(--ms-weight, var(--default-ms-weight)),
+    "FILL" var(--ms-fill, var(--default-ms-fill)),
+    "GRAD" var(--ms-grade, var(--default-ms-grade)),
+    "opsz" var(--ms-optical-size, var(--default-ms-optical-size));
+  font-style: normal;
+  font-weight: var(--ms-weight, var(--default-ms-weight));
+  -webkit-font-feature-settings: "liga";
+  font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  text-rendering: optimizeLegibility;
+}
+
+/**
+ * Font variant utility: ms-font-{variant}
+ * Changes the Material Symbols font variant (outlined, rounded, or sharp).
+ * Supports Tailwind modifiers: hover:, focus:, md:, lg:, etc.
+ *
+ * @example
+ * ```tsx
+ * <MSymbol symbol="notifications" className="ms-font-rounded" />
+ * <MSymbol symbol="drafts" className="ms-font-outlined hover:ms-font-sharp" />
+ * ```
+ */
+@utility ms-font-* {
+  --ms-font: --value(--ms-font-*);
+}
+
+/**
+ * Font weight utility: ms-wght-{weight}
+ * Sets the Material Symbols font weight. Supports predefined weights (100-700)
+ * or any integer value. Supports Tailwind modifiers.
+ *
+ * @example
+ * ```tsx
+ * <MSymbol symbol="notifications" className="ms-wght-400" />
+ * <MSymbol symbol="drafts" className="ms-wght-300 hover:ms-wght-700" />
+ * <MSymbol symbol="notifications" className="ms-wght-450 md:ms-wght-600" />
+ * ```
+ */
+@utility ms-wght-* {
+  --ms-weight: --value(--ms-weight-*);
+  --ms-weight: --value(integer);
+}
+
+/**
+ * Fill toggle utility: ms-fill
+ * Sets the fill value to 1 (filled style). Supports Tailwind modifiers.
+ *
+ * @example
+ * ```tsx
+ * <MSymbol symbol="notifications" className="ms-fill" />
+ * <MSymbol symbol="drafts" className="hover:ms-fill" />
+ * ```
+ */
+@utility ms-fill {
+  --ms-fill: 1;
+}
+
+/**
+ * Fill value utility: ms-fill-{value}
+ * Sets a specific fill value (0-1, supports decimals). 0 = outlined, 1 = filled.
+ * Supports Tailwind modifiers.
+ *
+ * @example
+ * ```tsx
+ * <MSymbol symbol="notifications" className="ms-fill-0.5" />
+ * <MSymbol symbol="drafts" className="ms-fill-0 hover:ms-fill-1" />
+ * ```
+ */
+@utility ms-fill-* {
+  --ms-fill: --value(number);
+}
+
+/**
+ * Grade utility: ms-grade-{value}
+ * Sets the grade value which controls icon emphasis/thickness.
+ * Supports predefined values (dark, normal, emphasis) or any integer.
+ * Supports Tailwind modifiers.
+ *
+ * @example
+ * ```tsx
+ * <MSymbol symbol="notifications" className="ms-grade-normal" />
+ * <MSymbol symbol="drafts" className="ms-grade-dark hover:ms-grade-emphasis" />
+ * <MSymbol symbol="notifications" className="ms-grade-100 focus:ms-grade-200" />
+ * ```
+ */
+@utility ms-grade-* {
+  --ms-grade: --value(--ms-grade-*);
+  --ms-grade: --value(integer);
+}
+
+/**
+ * Optical size utility: ms-opsz-{size}
+ * Sets the optical size of the icon. Supports predefined sizes (20, 24, 40, 48)
+ * or any integer value. Supports Tailwind modifiers for responsive sizing.
+ *
+ * @example
+ * ```tsx
+ * <MSymbol symbol="notifications" className="ms-opsz-24" />
+ * <MSymbol symbol="drafts" className="ms-opsz-20 md:ms-opsz-24 lg:ms-opsz-40" />
+ * <MSymbol symbol="notifications" className="ms-opsz-24 hover:ms-opsz-48" />
+ * ```
+ */
+@utility ms-opsz-* {
+  --ms-optical-size: --value(--ms-optical-size-*);
+  --ms-optical-size: --value(integer);
+}

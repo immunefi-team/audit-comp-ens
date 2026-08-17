@@ -1,0 +1,38 @@
+{
+  "$schema": "../../node_modules/@biomejs/biome/configuration_schema.json",
+  "root": false,
+  "extends": "//",
+  "files": {
+    "includes": [
+      "./**",
+
+      "!**/node_modules",
+
+      // SVG assets are static image files, not source code.
+      "!**/*.svg",
+
+      // Generated files
+      "!**/*.gen.ts",
+      "!**/*.gen.d.ts",
+
+      // Build & Temp files
+      "!**/.wrangler"
+    ]
+  },
+  "overrides": [
+    {
+      // uuid (uuidv7) is intentional here and has no native equivalent
+      // (crypto.randomUUID only produces v4). JSON manifests can't carry an
+      // inline suppression, so the dependency rule is disabled for this
+      // manifest only.
+      "includes": ["package.json"],
+      "linter": {
+        "rules": {
+          "nursery": {
+            "noRestrictedDependencies": "off"
+          }
+        }
+      }
+    }
+  ]
+}

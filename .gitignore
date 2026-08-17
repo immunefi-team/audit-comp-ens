@@ -1,0 +1,16 @@
+node_modules
+coverage
+.claude/
+dist
+**/.DS_Store
+package-lock.json
+.worktrees/
+*.workspace
+.mcp.json
+.dev.vars
+.pnpm-store/
+opencode.json
+e2e/test-results/*
+.security-audit/
+# E2E infra secrets (Linear OAuth for the dqa service, etc.)
+e2e/infra/.env

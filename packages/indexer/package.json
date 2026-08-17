@@ -1,0 +1,35 @@
+{
+  "name": "@ens-apps/indexer",
+  "version": "1.0.0",
+  "description": "Indexer for ENS apps",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": "./graphql.gen.ts",
+    "./urql": "./urql/client.ts",
+    "./chain": "./chain.ts"
+  },
+  "scripts": {
+    "codegen": "graphql-codegen",
+    "typecheck": "tsc --noEmit",
+    "test": "echo \"No tests defined for @ens-apps/indexer\"",
+    "lint": "biome check"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "^6.0.1",
+    "@graphql-codegen/fragment-matcher": "^6.0.0",
+    "@graphql-codegen/typescript": "^5.0.2",
+    "@graphql-codegen/typescript-document-nodes": "^5.0.6",
+    "@graphql-codegen/typescript-operations": "^5.0.2",
+    "typescript": "catalog:typescript6"
+  },
+  "keywords": [],
+  "dependencies": {
+    "@ensdomains/ensjs": "catalog:",
+    "@urql/core": "^6.0.1",
+    "@urql/exchange-retry": "^2.0.0",
+    "graphql": "^16.11.0",
+    "graphql-tag": "^2.12.6",
+    "viem": "catalog:"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "./.storybook/**/*.ts",
+    "./.storybook/**/*.tsx"
+  ],
+  "compilerOptions": {
+    /* Language and Environment */
+    "target": "ES2022",
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "jsx": "react-jsx",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+
+    /* Module Resolution */
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "noEmit": true,
+    // Enabling verbatimModuleSyntax can result in server bundles leaking into client bundles! (https://tanstack.com/start/latest/docs/framework/react/build-from-scratch#typescript-configuration)
+    "verbatimModuleSyntax": false,
+
+    /* Paths */
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+
+    /* Type Checking */
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true,
+    "noUncheckedIndexedAccess": true
+  }
+}

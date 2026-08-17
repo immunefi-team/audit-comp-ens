@@ -1,0 +1,115 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "ignoreUnknown": false,
+    "includes": [
+      "apps/**",
+      "packages/**",
+      "workers/**",
+      "e2e/**",
+
+      "!**/node_modules",
+
+      // SVG assets are static image files, not source code.
+      // Biome parses them as JSX/HTML and emits noise (parse errors,
+      // a11y/noSvgWithoutTitle, useSortedAttributes). Exclude them.
+      "!**/*.svg",
+
+      // Generated files
+      "!**/*.gen.ts",
+      "!**/*.gen.d.ts",
+      "!**/worker-configuration.d.ts",
+
+      // Third-party code checked into the repo verbatim. It is not ours to
+      // fix, and minified bundles trip nearly every lint rule
+      // (noAssignInExpressions, noCommaOperator, noParameterAssign, ...).
+      // NOTE: intentionally excluded from the linter, NOT from git — see
+      // packages/dqa-server/public/overlay.js, which loads the local copy
+      // first and only falls back to cdnjs.
+      "!**/vendor",
+      "!**/*.min.js",
+
+      // Build & Temp files
+      "!!**/dist",
+      "!!**/.wrangler"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "preset": "recommended",
+      "suspicious": {
+        "noUnknownAtRules": "off",
+        "noExplicitAny": "warn"
+      },
+      "style": {
+        "noNonNullAssertion": "warn"
+      },
+      "a11y": {
+        "noLabelWithoutControl": "warn",
+        "noStaticElementInteractions": "warn",
+        "useButtonType": "warn",
+        "useKeyWithClickEvents": "warn"
+      },
+      "complexity": {
+        "noUselessSwitchCase": "off",
+        "noExcessiveCognitiveComplexity": "warn"
+      },
+      "correctness": {
+        "noNestedComponentDefinitions": "warn"
+      },
+      "nursery": {
+        // Flags dependencies that have leaner/native alternatives
+        // (e18e replacement data). e.g. dotenv -> Node's --env-file.
+        "noRestrictedDependencies": "warn"
+      }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "semicolons": "asNeeded"
+    }
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
+  "overrides": [
+    {
+      // Playwright derives a fixture's dependencies by parsing its first
+      // argument and rejects anything that is not an object destructuring
+      // pattern ("First argument must use the object destructuring pattern",
+      // playwright/lib/common/fixtures.js). `async ({}, use) => ...` is
+      // therefore the only way to declare a fixture with no dependencies;
+      // rewriting it to `_` fails at run time.
+      "includes": ["e2e/fixtures/**"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noEmptyPattern": "off"
+          }
+        }
+      }
+    }
+  ]
+}

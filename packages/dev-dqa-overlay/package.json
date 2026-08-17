@@ -1,0 +1,23 @@
+{
+  "name": "@ens-apps/dev-dqa-overlay",
+  "version": "1.0.0",
+  "description": "QA-only DQA overlay controls for the ENS apps DevDrawer. Loads @ens-apps/dqa-server overlay.js when VITE_DQA is enabled — never in production builds.",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./setup": "./src/setup.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check"
+  },
+  "peerDependencies": {
+    "react": "^19"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.7",
+    "react": "^19.2.5",
+    "typescript": "catalog:typescript6"
+  }
+}

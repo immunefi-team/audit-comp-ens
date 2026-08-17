@@ -1,0 +1,223 @@
+# Per-PR e2e infra on Railway.
+#
+# On PR open/reopen: duplicates the Railway base environment into `pr-<number>`
+# (anvil snapshot, alto, paymaster, panoptes, mockestrator, dqa), points the
+# dqa service at the PR branch, generates public domains, and posts the URLs
+# as a PR comment.
+# On PR close/merge: deletes the environment.
+#
+# Required repo secrets/vars (see e2e/infra/railway/README.md for setup):
+#   secrets.RAILWAY_API_TOKEN   - account-scoped API token (NOT a project token).
+#                                 NOTE: accounts with 2FA can't delete envs
+#                                 non-interactively; use a CI/bot account.
+#   vars.RAILWAY_PROJECT_ID     - the ens-pr-infra project ID
+#   vars.RAILWAY_BASE_ENV_ID    - the base environment ID to duplicate
+#
+# Cost lever: to only deploy for labeled PRs, uncomment the `railway-infra`
+# label checks below.
+
+name: Railway PR infra
+
+on:
+  pull_request:
+    types: [opened, reopened, closed]
+  # Nightly safety net: delete any pr-* environment whose PR is no longer open
+  # (covers deletes that failed on PR close — see the `sweep` job).
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch: {}
+
+concurrency:
+  # PR events serialize per-PR; the scheduled sweep gets its own group so it
+  # never cancels or is cancelled by PR runs.
+  group: railway-pr-infra-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: false
+
+env:
+  RAILWAY_API_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
+  PROJECT_ID: ${{ vars.RAILWAY_PROJECT_ID }}
+  BASE_ENV_ID: ${{ vars.RAILWAY_BASE_ENV_ID }}
+  ENV_NAME: pr-${{ github.event.pull_request.number }}
+
+jobs:
+  create:
+    name: Create pr-${{ github.event.pull_request.number }} environment
+    if: github.event_name == 'pull_request' && github.event.action != 'closed'
+    # && contains(github.event.pull_request.labels.*.name, 'railway-infra')
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+
+      - name: Link project
+        run: railway link --project "$PROJECT_ID" --environment "$BASE_ENV_ID"
+
+      - name: Create environment from base
+        # SECURITY: we intentionally do NOT build the `dqa` service from the PR
+        # branch. The DQA service holds shared secrets (LINEAR_CLIENT_SECRET,
+        # SESSION_SECRET, TOKEN_ENCRYPTION_KEY); building PR-authored code with
+        # those secrets present would let a malicious PR exfiltrate them at
+        # runtime. Per-PR envs provide throwaway CHAIN infra only (image-based
+        # services copied as-is); DQA previews use the shared trusted instance
+        # at vars.DQA_SERVER_URL. `dqa-server` changes are validated via local
+        # `pnpm --filter @ens-apps/dqa-server dev` / e2e, not PR previews.
+        #
+        # `|| true` keeps reopened PRs idempotent if the env already exists.
+        run: |
+          railway environment new "$ENV_NAME" --copy "$BASE_ENV_ID" \
+            || echo "environment may already exist, continuing"
+
+      - name: Remove copied dqa service (don't replicate shared secrets)
+        # `--copy` duplicates the base `dqa` service — including its
+        # LINEAR_CLIENT_SECRET / SESSION_SECRET / TOKEN_ENCRYPTION_KEY — into
+        # every PR env. Previews use the shared base dqa, so the per-PR copy is
+        # unused; delete it so the secrets aren't replicated across N envs.
+        # Best-effort: never fail the run if the CLI flag/name differs.
+        run: |
+          railway environment "$ENV_NAME"
+          railway service delete dqa --yes \
+            || echo "::warning title=dqa not removed::Could not delete the copied 'dqa' service in '$ENV_NAME'. Verify the Railway CLI 'service delete' syntax; the per-PR dqa is unused but still holds copied secrets until removed."
+
+      - name: Generate public domains and collect URLs
+        id: domains
+        run: |
+          railway environment "$ENV_NAME"
+          {
+            echo "urls<<EOF"
+            # Only image-based chain services get public domains. `dqa` is NOT
+            # exposed here (shared trusted instance is used instead).
+            for svc in anvil alto paymaster panoptes mockestrator; do
+              # Creates a domain if the service has none, prints it otherwise.
+              url=$(railway domain --service "$svc" 2>/dev/null | grep -oE 'https?://[^ ]+' | head -1 || echo "pending")
+              echo "| $svc | $url |"
+            done
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Comment PR with environment URLs
+        uses: actions/github-script@v7
+        env:
+          # Pass dynamic values through env (never interpolate into the script
+          # body) so branch/URL content can't break out of the JS string.
+          URLS: ${{ steps.domains.outputs.urls }}
+          ENV_NAME: ${{ env.ENV_NAME }}
+          DQA_SERVER_URL: ${{ vars.DQA_SERVER_URL }}
+        with:
+          script: |
+            const { URLS, ENV_NAME, DQA_SERVER_URL } = process.env;
+            const body = [
+              `### Railway PR infra: \`${ENV_NAME}\``,
+              '',
+              '| Service | URL |',
+              '|---|---|',
+              URLS,
+              '',
+              'Point a local build at this environment:',
+              '```bash',
+              '# in apps/portal or apps/manager .env.local',
+              'VITE_SEPOLIA_RPC_URL=<anvil url>',
+              'VITE_INDEXER_GRAPHQL_URL=<panoptes url>/graphql',
+              'VITE_DQA=1',
+              `VITE_DQA_URL=${DQA_SERVER_URL || '<shared DQA server URL>'}`,
+              '```',
+              '',
+              '_DQA uses the shared trusted server (not built from this PR)._',
+              '_Environment is deleted automatically when this PR closes._',
+            ].join('\n');
+
+            const marker = '### Railway PR infra:';
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find(c => c.body?.startsWith(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
+
+  destroy:
+    name: Delete pr-${{ github.event.pull_request.number }} environment
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+
+      - name: Link project
+        run: railway link --project "$PROJECT_ID" --environment "$BASE_ENV_ID"
+
+      - name: Delete environment
+        # Do NOT swallow failures: a failed delete leaks ~6 running services
+        # (cost). Emit a GitHub warning so it's visible; the nightly `sweep`
+        # job is the backstop that will retry. `--yes` skips the interactive
+        # confirmation (the old silent `|| true` masked that prompt failing).
+        run: |
+          if railway environment delete "$ENV_NAME" --yes; then
+            echo "Deleted $ENV_NAME"
+          else
+            echo "::warning title=Railway env not deleted::Failed to delete '$ENV_NAME'. Up to 6 services may still be running (cost leak). The nightly sweep will retry; delete it manually in Railway if urgent."
+          fi
+
+  sweep:
+    name: Sweep orphaned pr-* environments
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      # Backstop for failed PR-close deletes: list every environment in the
+      # project via the Railway public API, and delete each `pr-<n>` whose
+      # GitHub PR is no longer open. Uses the API (not the CLI) because the CLI
+      # can't list environments non-interactively. GraphQL bodies are built
+      # with jq to avoid shell-escaping issues.
+      - name: Delete pr-* environments with no open PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          RAILWAY_API: https://backboard.railway.com/graphql/v2
+        run: |
+          set -euo pipefail
+          list=$(jq -n --arg id "$PROJECT_ID" \
+            '{query:"query($id:String!){project(id:$id){environments{edges{node{id name}}}}}",variables:{id:$id}}')
+          resp=$(curl -sS "$RAILWAY_API" \
+            -H "Authorization: Bearer $RAILWAY_API_TOKEN" \
+            -H "Content-Type: application/json" -d "$list")
+
+          echo "$resp" | jq -r '.data.project.environments.edges[].node | "\(.id)\t\(.name)"' \
+          | while IFS=$'\t' read -r id name; do
+              case "$name" in
+                pr-[0-9]*)
+                  num=${name#pr-}
+                  state=$(curl -sS -H "Authorization: Bearer $GH_TOKEN" \
+                    "https://api.github.com/repos/$REPO/pulls/$num" | jq -r '.state // "missing"')
+                  if [ "$state" = "open" ]; then
+                    echo "keep $name (PR #$num open)"
+                  else
+                    echo "sweeping $name (PR #$num state=$state)"
+                    del=$(jq -n --arg id "$id" \
+                      '{query:"mutation($id:String!){environmentDelete(id:$id)}",variables:{id:$id}}')
+                    out=$(curl -sS "$RAILWAY_API" \
+                      -H "Authorization: Bearer $RAILWAY_API_TOKEN" \
+                      -H "Content-Type: application/json" -d "$del")
+                    if echo "$out" | jq -e '.data.environmentDelete == true' >/dev/null 2>&1; then
+                      echo "  deleted $name"
+                    else
+                      echo "::warning title=Sweep failed::Could not delete '$name': $out"
+                    fi
+                  fi
+                  ;;
+              esac
+            done

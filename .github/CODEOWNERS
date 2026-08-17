@@ -1,0 +1,17 @@
+# Workflow files
+/.github/workflows/ @svemat01 @Malak67
+
+# API Worker
+/workers/api-worker/ @svemat01
+
+# E2E Tests
+/e2e/ @sugh01
+
+# Packages
+/packages/transaction-manager/ @v1rtl @LeonmanRolls
+/packages/indexer/ @v1rtl
+/packages/smart-account/ @v1rtl @f1lander
+/packages/utils/ @svemat01
+/packages/l2-primary/ @v1rtl
+
+/docs/ @Malak67

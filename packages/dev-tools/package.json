@@ -1,0 +1,29 @@
+{
+  "name": "@ens-apps/dev-tools",
+  "version": "1.0.0",
+  "description": "DEV-only unified developer tooling drawer for ENS apps.",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check"
+  },
+  "dependencies": {
+    "@ens-apps/dev-dqa-overlay": "workspace:*",
+    "@ens-apps/dev-migration-tool": "workspace:*",
+    "@ens-apps/dev-time-travel": "workspace:*"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "^5",
+    "react": "^19"
+  },
+  "devDependencies": {
+    "@tanstack/react-query": "^5.90.12",
+    "@types/react": "^19.2.7",
+    "react": "^19.2.5",
+    "typescript": "catalog:typescript6"
+  }
+}

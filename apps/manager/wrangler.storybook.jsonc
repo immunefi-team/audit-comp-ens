@@ -1,0 +1,8 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "manager-app-v4-storybook",
+  "compatibility_date": "2026-06-02",
+  "assets": {
+    "directory": "./storybook-static"
+  }
+}

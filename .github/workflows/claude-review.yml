@@ -1,0 +1,90 @@
+name: Claude Style Review
+
+# Disabled on PRs while we evaluate a replacement. Re-enable by restoring the
+# `pull_request` trigger; manual invocation is still possible via the
+# workflow_dispatch input below.
+on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to review'
+        required: true
+        type: string
+
+concurrency:
+  group: claude-review-${{ github.event.inputs.pr_number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          # Note: use_sticky_comment is documented for pull_request events and is
+          # ignored on workflow_dispatch. Manual runs post discrete comments via gh.
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.inputs.pr_number }}
+
+            Review this pull request as a manual fallback for Greptile. The
+            primary review source is the `.greptile/` folder — match its
+            conventions so comments stay consistent with automated reviews.
+
+            STEP 1 - Check previous comments:
+            Fetch any existing review comments on this PR using:
+            gh api repos/${{ github.repository }}/pulls/${{ github.event.inputs.pr_number }}/comments
+            Note which issues have already been flagged to avoid duplicate comments.
+
+            To get thread IDs for resolving comments, use:
+            gh api graphql -f query='query { repository(owner:"${{ github.repository_owner }}", name:"${{ github.event.repository.name }}") { pullRequest(number:${{ github.event.inputs.pr_number }}) { reviewThreads(first:100) { nodes { id isResolved comments(first:1) { nodes { body path line } } } } } } }'
+
+            STEP 2 - Read the review configuration (in order):
+            1. `.greptile/config.json` — the structured rule list with id, scope,
+               and severity. This is the primary rule source.
+            2. `.greptile/rules.md` — severity behaviour, skip list, exemplar
+               files. Apply the "What to skip entirely" section.
+            3. `REVIEW.md` — high-level review process notes.
+            4. `packages/transaction-manager/CLAUDE.md` — only if the PR touches
+               that package.
+
+            Do NOT read STYLEGUIDE.md in full. Treat it as a deep-dive reference
+            consulted only when a rule in `.greptile/config.json` doesn't fit
+            the specific case.
+
+            STEP 3 - Review changes:
+            Iterate over the changed files. For each file, evaluate it against
+            the rules in `.greptile/config.json` whose `scope` globs match the
+            file path. Apply the severity behaviour from `.greptile/rules.md`:
+            - severity "high"   → always flag
+            - severity "medium" → flag unless author left a justifying comment
+            - severity "low"    → flag only if repeated or significantly hurts readability
+
+            IMPORTANT - Comment guidelines:
+            - ONLY use inline comments for NEW issues that need fixing. Do NOT duplicate comments that already exist.
+            - Never post positive/praise inline comments.
+            - For each issue, reference the rule by its `id` from config.json
+              (e.g. "Rule: `no-effect-data-fetching`"), explain what's wrong,
+              and include a brief code suggestion.
+            - Before flagging a "medium" or "low" violation, check whether the
+              author left a justifying code comment (see "Documented
+              exceptions" in REVIEW.md).
+            - If a previous comment's issue has been FIXED in the current code, resolve that thread using:
+              gh api graphql -f query='mutation { resolveReviewThread(input: {threadId: "THREAD_ID"}) { thread { id } } }'
+            - In your summary comment, note which previous issues you resolved.
+            - Positive observations about the PR may be included in the summary only.
+
+          claude_args: |
+            --model claude-opus-4-7
+            --allowedTools "Read,Glob,Grep,mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr review:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh api:*)"

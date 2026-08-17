@@ -1,0 +1,18 @@
+node_modules
+.DS_Store
+dist
+dist-ssr
+*.local
+
+*storybook.log
+storybook-static
+
+.tanstack
+.output
+.nitro
+.wrangler
+.dev.vars
+.env
+
+# Don't commit compiled lingui messages
+src/locales/*/messages.js

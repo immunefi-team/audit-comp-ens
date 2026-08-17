@@ -1,0 +1,39 @@
+{
+  "name": "@ens-apps/weave-loader",
+  "version": "0.1.0",
+  "description": "Standalone weave loader: WebGL woven-fabric shader, animated name fill, and progress primitives for ENS apps",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./FilledGlyph": "./src/FilledGlyph.tsx",
+    "./NameFill": "./src/NameFill.tsx",
+    "./WeaveCanvas": "./src/WeaveCanvas.tsx",
+    "./WeaveCanvasSandbox": "./src/WeaveCanvasSandbox.tsx",
+    "./WeaveLoader": "./src/WeaveLoader.tsx",
+    "./WeaveName": "./src/WeaveName.tsx",
+    "./WeaveProgressBar": "./src/WeaveProgressBar.tsx",
+    "./hooks/useRafProgress": "./src/hooks/useRafProgress.ts",
+    "./hooks/usePrefersReducedMotion": "./src/hooks/usePrefersReducedMotion.ts",
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check"
+  },
+  "dependencies": {
+    "@ens-apps/utils": "workspace:*",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.3.1"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
+  },
+  "devDependencies": {
+    "@storybook/tanstack-react": "^10.4.2",
+    "@types/react": "^19.1.12",
+    "react": "^19.2.5",
+    "typescript": "catalog:typescript6",
+    "vite": "catalog:"
+  }
+}

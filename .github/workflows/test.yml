@@ -1,0 +1,75 @@
+name: Test and Quality Checks
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  quality-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          # Fetch all history for change detection
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "lts/*"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Determine base ref
+        id: base
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "ref=origin/${BASE_REF}" >> $GITHUB_OUTPUT
+          else
+            echo "ref=origin/main" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Type check changed packages
+        run: |
+          echo "🔍 Type checking changed packages and their dependents..."
+          pnpm --filter="...[${{ steps.base.outputs.ref }}]" typecheck
+
+      # No `--if-present`: a package without a `lint` script must fail the
+      # build, not be skipped. That flag silently green-lit every package
+      # except manager/portal (the only two that had the script).
+      - name: Run Biome lint on changed packages
+        run: |
+          echo "🔍 Running Biome on changed packages..."
+          pnpm --filter="...[${{ steps.base.outputs.ref }}]" lint
+
+      # Safety net for anything the workspace filter can't see: root-level
+      # config, files in a package whose manifest didn't change, and new
+      # directories not yet added to biome.jsonc's `files.includes`.
+      - name: Run Biome on the whole repo
+        run: pnpm exec biome ci --reporter=github
+
+      - name: Run tests with coverage on changed packages
+        run: |
+          echo "📊 Running coverage tests on changed packages..."
+          pnpm --filter="...[${{ steps.base.outputs.ref }}]" test:coverage
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v7
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      # TODO: Uncomment when Knip is configured for all packages
+      # - name: Run Knip on changed packages
+      #   run: |
+      #     echo "🧹 Checking for unused code in changed packages..."
+      #     pnpm --filter="...[${{ steps.base.outputs.ref }}]" knip --include files,dependencies

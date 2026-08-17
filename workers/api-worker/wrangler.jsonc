@@ -1,0 +1,113 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "app-api-worker",
+  "main": "src/worker.ts",
+  "compatibility_date": "2025-08-14",
+  "compatibility_flags": ["nodejs_compat"],
+
+  "observability": {
+    "enabled": false,
+    "head_sampling_rate": 1,
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "persist": true,
+      "invocation_logs": true
+    },
+    "traces": {
+      "enabled": true,
+      "persist": true,
+      "head_sampling_rate": 1
+    }
+  },
+
+  "kv_namespaces": [
+    {
+      "binding": "KV",
+      "id": "85a14d25fa4a41a3a7123bcd5093c09a"
+    }
+  ],
+
+  "queues": {
+    "producers": [
+      {
+        "binding": "EVENT_INGESTION_QUEUE",
+        "queue": "app-api-worker-event-ingestion"
+      },
+      {
+        "binding": "TELEGRAM_QUEUE",
+        "queue": "app-api-worker-telegram-delivery"
+      },
+      {
+        "binding": "EMAIL_QUEUE",
+        "queue": "app-api-worker-email-delivery"
+      },
+      {
+        "binding": "PUSH_QUEUE",
+        "queue": "app-api-worker-push-delivery"
+      },
+      {
+        "binding": "DLQ",
+        "queue": "app-api-worker-dlq"
+      }
+    ],
+    "consumers": [
+      {
+        "queue": "app-api-worker-telegram-delivery",
+        "max_batch_size": 10,
+        "max_batch_timeout": 5,
+        "max_retries": 3,
+        "dead_letter_queue": "app-api-worker-dlq"
+      },
+      {
+        "queue": "app-api-worker-email-delivery",
+        "max_batch_size": 50,
+        "max_batch_timeout": 3,
+        "max_retries": 3,
+        "dead_letter_queue": "app-api-worker-dlq"
+      },
+      {
+        "queue": "app-api-worker-push-delivery",
+        "max_batch_size": 50,
+        "max_batch_timeout": 3,
+        "max_retries": 3,
+        "dead_letter_queue": "app-api-worker-dlq"
+      },
+      {
+        "queue": "app-api-worker-event-ingestion",
+        "max_batch_size": 50,
+        "max_batch_timeout": 3,
+        "max_retries": 3
+      },
+      {
+        "queue": "app-api-worker-dlq",
+        "max_batch_size": 10,
+        "max_batch_timeout": 30,
+        "max_retries": 0
+      }
+    ]
+  },
+
+  "triggers": {
+    "crons": ["0 */1 * * *"]
+  },
+
+  "vars": {
+    "CHAIN": "sepolia",
+    "BASE_URL": "https://app-api.ens.dev",
+    "EMAIL_FROM_ADDRESS": "noreply@ens.dev",
+    "ENS_INDEXER_GRAPHQL_URL": "https://graphql.ens.dev/",
+    "MANAGER_APP_URL": "https://app.ens.dev",
+    "POSTHOG": {
+      "host": "https://eu.posthog.com",
+      "unique_searches_endpoint": "/api/projects/109100/endpoints/unique_name_searches_last_30d/run"
+    },
+    "VAPID_SUBJECT": "mailto:notifications@ens.domains",
+    "VAPID_PUBLIC_KEY": "BOBjtfgZPtGSJtajVkh4T1Ceswos_aRXYlD4Mq8aXEa4sc_0lkrwKzUhnUIgCt22_cAEYSr0wZlhCiWPsFXyRGs",
+    "SENDGRID_BROADCAST_LIST_ID": "",
+    "SENDGRID_TEMPLATE_IDS": {
+      "name-expiry": "d-fb5409b2dc1e44f6919cd648eb983adf",
+      "name-transferred": "d-f1db08f6dcc54d92a055e8637327ac2a"
+    }
+  }
+}

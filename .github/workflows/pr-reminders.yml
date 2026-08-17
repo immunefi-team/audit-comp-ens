@@ -1,0 +1,35 @@
+name: PR reminders
+
+on:
+  schedule:
+    # The "2-3x a week" knob: one line per run. Times are UTC.
+    - cron: "0 9 * * 1" # Monday 09:00
+    - cron: "0 9 * * 3" # Wednesday 09:00
+    - cron: "0 9 * * 5" # Friday 09:00
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Print the digest to the log instead of posting to Slack"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read # actions/checkout
+  pull-requests: read
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "lts/*"
+      - name: Post PR reminders to Slack
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.PR_REMINDERS_SLACK_WEBHOOK }}
+          DRY_RUN: ${{ inputs.dry_run && '1' || '' }}
+        run: node .github/scripts/pr-reminders.mjs

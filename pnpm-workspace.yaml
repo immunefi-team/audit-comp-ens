@@ -1,0 +1,59 @@
+packages:
+  - apps/*
+  - packages/*
+  - workers/*
+  - e2e
+
+autoInstallPeers: false
+
+catalog:
+  "@ensdomains/ensjs": "https://pkg.pr.new/ensdomains/ensjs/@ensdomains/ensjs@e96662c"
+  "@ensdomains/ensjs-abi": "https://pkg.pr.new/ensdomains/ensjs/@ensdomains/ensjs-abi@e96662c"
+  xstate: ^5.24.0
+  "@typescript/native-preview": 7.0.0-dev.20260421.2
+  vite: ^8.0.10
+  vitest: ^4.1.5
+  "@vitest/coverage-v8": ^4.1.5
+  "@cloudflare/vite-plugin": ^1.33.1
+  wrangler: ^4.51.0
+  posthog-js: ^1.398.3
+  "@posthog/react": ^1.10.3
+  viem: ^2.52.2
+  "@rhinestone/sdk": 1.8.0
+  # Optional peer dep of @wagmi/connectors (walletConnect connector). Since wagmi
+  # v3 all connector deps are optional peers, and autoInstallPeers is false, so it
+  # must be declared explicitly or the prod bundle fails to resolve it at runtime.
+  "@walletconnect/ethereum-provider": ~2.21.1
+  # wagmi pins @wagmi/core and @wagmi/connectors to exact versions, so these
+  # three only ever move together — bumping one alone just re-duplicates the
+  # tree at wagmi's pinned version.
+  wagmi: ^3.7.6
+  "@wagmi/core": ^3.6.4
+  "@wagmi/connectors": ^8.1.0
+
+catalogs:
+  typescript6:
+    typescript: ^6.0.3
+
+dedupeDirectDeps: true
+
+minimumReleaseAge: 1440
+
+minimumReleaseAgeExclude:
+  - "@ensdomains/ensjs"
+  - "@ensdomains/ensjs-abi"
+
+# Only add entries here if absolutely necessary. To bypass the minimum release age for a specific package, you can temporarily include it below, run install, and then remove it.
+# Note: `minimumReleaseAgeExclude` is used solely for checking new package versions.
+# Once a package is added to the lockfile, it remains allowed even if newer than the minimum release age.
+# minimumReleaseAgeExclude:
+
+resolutionMode: highest
+
+trustPolicy: no-downgrade
+
+trustPolicyIgnoreAfter: 10080 # 1 week
+
+trustPolicyExclude:
+  - "@ensdomains/ensjs"
+  - "@ensdomains/ensjs-abi"

@@ -1,0 +1,463 @@
+@import "tw-animate-css";
+@import "tailwindcss";
+@import "./fonts.css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* WalletConnect (reown) modal reads `z-index: var(--w3m-z-index)`; when we use
+     the bare wagmi walletConnect connector nothing defines it, so it collapses
+     to auto and the app's own z-indexed elements (sidebar, headers, badges)
+     stack over the QR modal. Define it high so the modal sits above everything. */
+  --w3m-z-index: 2147483646;
+  --radius: 0.625rem;
+  --background: #ffffff;
+  --foreground: #191919;
+  --card: #faf9f7;
+  --card-foreground: #191919;
+  --popover: #ffffff;
+  --popover-foreground: #191919;
+  --primary: #191919;
+  --primary-foreground: #faf9f7;
+  --secondary: #f2f2f2;
+  --secondary-foreground: #191919;
+  --muted: #f2f2f2;
+  --muted-foreground: #737373;
+  --accent: #f2f2f2;
+  --accent-foreground: #191919;
+  --destructive: var(--garnet-500);
+  --danger: var(--garnet-500);
+  --success: var(--peridot-500);
+  --warning: var(--citrine-500);
+  --border: #e1e1e0;
+  --input: #f2f2f2;
+  --ring: #737373;
+  --sidebar: #f9f9f7;
+  --sidebar-foreground: #737373;
+  --sidebar-primary: #f2f2f2;
+  --sidebar-primary-foreground: #191919;
+  --sidebar-accent: #f2f2f2;
+  --sidebar-accent-foreground: #595755;
+  --sidebar-border: #e1e1e0;
+  --sidebar-ring: #737373;
+
+  --lapis-100: #dbf0f8;
+  --lapis-200: #daf1fb;
+  --lapis-400: #80c4e0;
+  --lapis-500: #0082bb;
+  --lapis-900: #02293b;
+
+  --citrine-100: #f8f7e2;
+  --citrine-200: #fee0c8;
+  --citrine-400: #e1b77e;
+  --citrine-500: #914b1c;
+  --citrine-900: #441b03;
+
+  --peridot-100: #d1eedf;
+  --peridot-200: #c9f7d7;
+  --peridot-400: #65d388;
+  --peridot-500: #007c20;
+  --peridot-900: #033010;
+
+  --garnet-100: #feeaf0;
+  --garnet-200: #ffd1e7;
+  --garnet-400: #ffb0d0;
+  --garnet-500: #ed2496;
+  --garnet-900: #5a0024;
+
+  --quartz-0: #ffffff;
+  --quartz-50: #f8f8f8;
+  --quartz-100: #e5e5e5;
+  --quartz-200: #c3c7c8;
+  --quartz-350: #a1a1a1;
+  --quartz-400: #737373;
+  --quartz-500: #5d5751;
+  --quartz-900: #191919;
+
+  /* 🪜 Neutral layers */
+  /* ───────────────── */
+  --neutral-0: #ffffff;
+  --neutral-1: #f9f9f7;
+  --neutral-2: #f2f2f2;
+  --neutral-3: #e1e1e0;
+  --neutral-4: #c7c6c4;
+  --neutral-5: #a1a1a1;
+  --neutral-6: #737373;
+  --neutral-7: #595755;
+  --neutral-8: #191919;
+  --neutral-9: #000000;
+
+  /* 🚦 Signal ramps */
+  /* ─────────────── */
+  --signal-danger-100: #ffedeb;
+  --signal-danger-200: #ffdad6;
+  --signal-danger-300: #ffc9c4;
+  --signal-danger-400: #ffb3ac;
+  --signal-danger-500: #c82e1f;
+  --signal-danger-600: #b42013;
+  --signal-danger-700: #9a1b10;
+  --signal-danger-800: #821a11;
+  --signal-danger-900: #440e09;
+
+  --signal-success-100: #e3f7e9;
+  --signal-success-200: #d7f4df;
+  --signal-success-300: #c6efd1;
+  --signal-success-400: #aae9ba;
+  --signal-success-500: #15a571;
+  --signal-success-600: #167e30;
+  --signal-success-700: #105c23;
+  --signal-success-800: #0e4a1d;
+  --signal-success-900: #0a3816;
+
+  --signal-warning-100: #fffaeb;
+  --signal-warning-200: #fff7e0;
+  --signal-warning-300: #fef3d5;
+  --signal-warning-400: #feeec4;
+  --signal-warning-500: #fccf57;
+  --signal-warning-600: #e1a31e;
+  --signal-warning-700: #955b14;
+  --signal-warning-800: #79490e;
+  --signal-warning-900: #5c2d00;
+
+  /* Semantic text colors — light mode values (higher contrast for light backgrounds) */
+  --accent-text: #0082bb;
+  --success-text: #007c20;
+  --danger-text: #e72a96;
+  --warning-text: #984d1b;
+  --default-text: #595755;
+  --entity-bg: transparent;
+  --entity-border: transparent;
+  /* Semantic fill colors — light mode per-variant backgrounds */
+  --accent-fill: #ebf7fd;
+  --success-fill: #e8f6ef;
+  --danger-fill: #fef0f6;
+  --warning-fill: #fdf6ee;
+  --default-fill: #f2f2f2;
+  --icon-foreground: #191919;
+
+  /* Button component tokens */
+  /* ─────────────────────── */
+  --button-danger-default: var(--signal-danger-300);
+  --button-danger-hover: var(--signal-danger-400);
+  --button-success-default: var(--signal-success-300);
+  --button-success-hover: var(--signal-success-400);
+  --button-warning-default: var(--signal-warning-300);
+  --button-warning-hover: var(--signal-warning-400);
+
+  /* Message component tokens */
+  /* ──────────────────────── */
+  --message-danger-fill: var(--signal-danger-100);
+  --message-danger-text: var(--signal-danger-700);
+  --message-success-fill: var(--signal-success-100);
+  --message-success-text: var(--signal-success-700);
+  --message-warning-fill: var(--signal-warning-100);
+  --message-warning-text: var(--signal-warning-700);
+
+  --type-entity-fill: var(--accent-fill);
+  --type-entity-text: var(--accent-text);
+
+  --avatar-placeholder-gradient: linear-gradient(
+    135deg,
+    #ef7eb8 0%,
+    #c6bef2 50%,
+    #d6d4f8 100%
+  );
+}
+
+@theme inline {
+  --radius-xs: calc(var(--radius) - 6px);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  /* Disable Tailwind's default gray namespaces — use --neutral-* instead. */
+  --color-gray-*: initial;
+  --color-zinc-*: initial;
+  --color-neutral-*: initial;
+  --color-slate-*: initial;
+  --color-stone-*: initial;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-lapis-100: var(--lapis-100);
+  --color-lapis-200: var(--lapis-200);
+  --color-lapis-400: var(--lapis-400);
+  --color-lapis-500: var(--lapis-500);
+  --color-lapis-900: var(--lapis-900);
+  --color-citrine-100: var(--citrine-100);
+  --color-citrine-200: var(--citrine-200);
+  --color-citrine-400: var(--citrine-400);
+  --color-citrine-500: var(--citrine-500);
+  --color-citrine-900: var(--citrine-900);
+  --color-peridot-100: var(--peridot-100);
+  --color-peridot-200: var(--peridot-200);
+  --color-peridot-400: var(--peridot-400);
+  --color-peridot-500: var(--peridot-500);
+  --color-peridot-900: var(--peridot-900);
+  --color-garnet-100: var(--garnet-100);
+  --color-garnet-200: var(--garnet-200);
+  --color-garnet-400: var(--garnet-400);
+  --color-garnet-500: var(--garnet-500);
+  --color-garnet-900: var(--garnet-900);
+  --color-quartz-0: var(--quartz-0);
+  --color-quartz-50: var(--quartz-50);
+  --color-quartz-100: var(--quartz-100);
+  --color-quartz-200: var(--quartz-200);
+  --color-quartz-350: var(--quartz-350);
+  --color-quartz-400: var(--quartz-400);
+  --color-quartz-500: var(--quartz-500);
+  --color-quartz-900: var(--quartz-900);
+  --color-neutral-0: var(--neutral-0);
+  --color-neutral-1: var(--neutral-1);
+  --color-neutral-2: var(--neutral-2);
+  --color-neutral-3: var(--neutral-3);
+  --color-neutral-4: var(--neutral-4);
+  --color-neutral-5: var(--neutral-5);
+  --color-neutral-6: var(--neutral-6);
+  --color-neutral-7: var(--neutral-7);
+  --color-neutral-8: var(--neutral-8);
+  --color-neutral-9: var(--neutral-9);
+  --color-signal-danger-100: var(--signal-danger-100);
+  --color-signal-danger-200: var(--signal-danger-200);
+  --color-signal-danger-300: var(--signal-danger-300);
+  --color-signal-danger-400: var(--signal-danger-400);
+  --color-signal-danger-500: var(--signal-danger-500);
+  --color-signal-danger-600: var(--signal-danger-600);
+  --color-signal-danger-700: var(--signal-danger-700);
+  --color-signal-danger-800: var(--signal-danger-800);
+  --color-signal-danger-900: var(--signal-danger-900);
+  --color-signal-success-100: var(--signal-success-100);
+  --color-signal-success-200: var(--signal-success-200);
+  --color-signal-success-300: var(--signal-success-300);
+  --color-signal-success-400: var(--signal-success-400);
+  --color-signal-success-500: var(--signal-success-500);
+  --color-signal-success-600: var(--signal-success-600);
+  --color-signal-success-700: var(--signal-success-700);
+  --color-signal-success-800: var(--signal-success-800);
+  --color-signal-success-900: var(--signal-success-900);
+  --color-signal-warning-100: var(--signal-warning-100);
+  --color-signal-warning-200: var(--signal-warning-200);
+  --color-signal-warning-300: var(--signal-warning-300);
+  --color-signal-warning-400: var(--signal-warning-400);
+  --color-signal-warning-500: var(--signal-warning-500);
+  --color-signal-warning-600: var(--signal-warning-600);
+  --color-signal-warning-700: var(--signal-warning-700);
+  --color-signal-warning-800: var(--signal-warning-800);
+  --color-signal-warning-900: var(--signal-warning-900);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-accent-text: var(--accent-text);
+  --color-success-text: var(--success-text);
+  --color-danger-text: var(--danger-text);
+  --color-warning-text: var(--warning-text);
+  --color-default-text: var(--default-text);
+  --color-entity-bg: var(--entity-bg);
+  --color-entity-border: var(--entity-border);
+  --color-accent-fill: var(--accent-fill);
+  --color-success-fill: var(--success-fill);
+  --color-danger-fill: var(--danger-fill);
+  --color-warning-fill: var(--warning-fill);
+  --color-default-fill: var(--default-fill);
+  --color-icon-foreground: var(--icon-foreground);
+  --color-button-danger-default: var(--button-danger-default);
+  --color-button-danger-hover: var(--button-danger-hover);
+  --color-button-success-default: var(--button-success-default);
+  --color-button-success-hover: var(--button-success-hover);
+  --color-button-warning-default: var(--button-warning-default);
+  --color-button-warning-hover: var(--button-warning-hover);
+  --color-message-danger-fill: var(--message-danger-fill);
+  --color-message-danger-text: var(--message-danger-text);
+  --color-message-success-fill: var(--message-success-fill);
+  --color-message-success-text: var(--message-success-text);
+  --color-message-warning-fill: var(--message-warning-fill);
+  --color-message-warning-text: var(--message-warning-text);
+  --color-type-entity-fill: var(--type-entity-fill);
+  --color-type-entity-text: var(--type-entity-text);
+}
+
+.dark {
+  --background: #1e1e1e;
+  --foreground: #e1e1e0;
+  --card: #383838;
+  --card-foreground: #e1e1e0;
+  --popover: #383838;
+  --popover-foreground: #e1e1e0;
+  --primary: #e1e1e0;
+  --primary-foreground: #191919;
+  --secondary: #2b2b2b;
+  --secondary-foreground: #e1e1e0;
+  --muted: #383838;
+  --muted-foreground: #a1a1a1;
+  --accent: #222222;
+  --accent-foreground: #e1e1e0;
+  --destructive: var(--garnet-400);
+  --danger: var(--garnet-400);
+  --success: var(--peridot-400);
+  --warning: var(--citrine-400);
+  --border: #4a4a4a;
+  --input: #222222;
+  --ring: var(--lapis-400);
+  --sidebar: #222222;
+  --sidebar-foreground: #e1e1e0;
+  --sidebar-primary: var(--lapis-400);
+  --sidebar-primary-foreground: #191919;
+  --sidebar-accent: #2b2b2b;
+  --sidebar-accent-foreground: #e1e1e0;
+  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --sidebar-ring: var(--lapis-400);
+  --entity-bg: #222222;
+  --entity-border: #383838;
+  /* Semantic fill colors — dark mode per-variant backgrounds */
+  --accent-fill: #152d37;
+  --success-fill: #142f1c;
+  --danger-fill: #391925;
+  --warning-fill: #41250c;
+  /* Neutral fill: without this the light-mode #f2f2f2 leaks into dark mode,
+     rendering "default" badges (Unverifiable, fuse False) as bright chips
+     with unreadable #a1a1a1 text. */
+  --default-fill: #2b2b2b;
+  /* Semantic text colors — dark mode values (light rock-name 200s) */
+  --accent-text: var(--lapis-200);
+  --success-text: var(--peridot-200);
+  --danger-text: var(--garnet-200);
+  --warning-text: var(--citrine-200);
+  --default-text: #a1a1a1;
+  --icon-foreground: #595755;
+
+  /* Button component tokens — dark */
+  --button-danger-default: var(--signal-danger-800);
+  --button-danger-hover: var(--signal-danger-700);
+  --button-success-default: var(--signal-success-800);
+  --button-success-hover: var(--signal-success-700);
+  --button-warning-default: var(--signal-warning-800);
+  --button-warning-hover: var(--signal-warning-700);
+
+  /* Message component tokens — dark: neutral fill, pale tinted text */
+  --message-danger-fill: var(--neutral-2);
+  --message-danger-text: var(--signal-danger-200);
+  --message-success-fill: var(--neutral-2);
+  --message-success-text: var(--signal-success-200);
+  --message-warning-fill: var(--neutral-2);
+  --message-warning-text: var(--signal-warning-200);
+
+  /* 🪜 Neutral layers — dark */
+  --neutral-0: #1e1e1e;
+  --neutral-1: #222222;
+  --neutral-2: #2b2b2b;
+  --neutral-3: #383838;
+  --neutral-4: #4b4b4b;
+  --neutral-5: #808080;
+  --neutral-6: #bbbbbb;
+  --neutral-7: #e1e1e0;
+  --neutral-8: #f9f9f7;
+  --neutral-9: #ffffff;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+}
+
+@theme {
+  --font-sans: "ABCMonumentGrotesk";
+  --font-mono: "ABCMonumentGroteskMono";
+  --font-semi-mono: "ABCMonumentGroteskSemiMono";
+  --font-serif: "ABCMarist";
+  --text-heading: 1.75rem;
+
+  /* Type scale — 1:1 with the ENS Builder / Figma type styles (WEB-595).
+     Weights 360/425 are real instances on the Grotesk variable wght axis
+     (see fonts.css). */
+  --text-h1: 2.125rem; /* 34px */
+  --text-h1--line-height: 2.375rem; /* 38px */
+  --text-h1--font-weight: 425;
+  --text-h2: 1.5rem; /* 24px */
+  --text-h2--line-height: 1;
+  --text-h2--font-weight: 425;
+  --text-h3: 1.125rem; /* 18px */
+  --text-h3--line-height: 1;
+  --text-h3--font-weight: 425;
+  --text-p: 0.9375rem; /* 15px */
+  --text-p--line-height: 1.375rem; /* 22px */
+  --text-p--font-weight: 360;
+  /* Figma "base" — single-line UI text. Kept off Tailwind's `text-base`
+     (16/24) so multi-line body copy doesn't collapse to a 15px line height. */
+  --text-ui: 0.9375rem; /* 15px */
+  --text-ui--line-height: 0.9375rem; /* 15px */
+  --text-ui--font-weight: 360;
+  --text-ui--letter-spacing: 0.02em;
+  --text-small: 0.75rem; /* 12px */
+}
+
+/* Figma styles that need font-family or text-transform, which text tokens
+   can't carry: caps, smallcaps, entity/base, entity/name, entity/label. */
+@utility text-caps {
+  font-size: 0.875rem; /* 14px */
+  font-weight: 500;
+  letter-spacing: 0.07em; /* 7% tracking = 0.98px at 14px */
+  text-transform: uppercase;
+}
+
+@utility text-smallcaps {
+  font-size: 0.625rem; /* 10px */
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+/* Entity styles: 14px/15px, tracking 0.02em per the design spec (WEB-649).
+   Figma weight for entity/base is 425, but the static Mono cuts are 400/500 —
+   400 matches how badges render today. */
+@utility text-entity-base {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 0.9375rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+@utility text-entity-name {
+  font-family: var(--font-semi-mono);
+  font-size: 0.875rem;
+  line-height: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+@utility text-entity-label {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  line-height: 0.9375rem;
+  font-weight: 400;
+}

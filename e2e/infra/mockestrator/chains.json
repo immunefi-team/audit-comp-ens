@@ -1,0 +1,16 @@
+{
+  "11155111": {
+    "tokens": {
+      "ETH": {
+        "address": "0x0000000000000000000000000000000000000000",
+        "decimals": 18
+      },
+      "USDC": {
+        "address": "0x768F42455A2D082E23ceeF7d51e5787C82d67a39",
+        "decimals": 6,
+        "balanceSlot": 0,
+        "approvalSlot": 1
+      }
+    }
+  }
+}

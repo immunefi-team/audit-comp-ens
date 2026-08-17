@@ -1,0 +1,236 @@
+@theme {
+  --font-sans: "ABCMonumentGrotesk";
+  --font-mono: "ABCMonumentGroteskMono";
+  --font-semi-mono: "ABCMonumentGroteskSemiMono";
+  --font-serif: "ABCMarist";
+
+  /* Line heights */
+  --leading-ens-none: 96%;
+  --leading-ens-tight: 112%;
+  --leading-ens-normal: 120%;
+
+  /* Experimental new brand colors */
+  --color-ens-lapis-100: #dbf0f8;
+  --color-ens-lapis-300: #80c4e0;
+  --color-ens-lapis-400: #39b4ea;
+  --color-ens-lapis-500: #0082bb;
+  --color-ens-lapis-900: #02293b;
+  --color-ens-lapis-dust: #cee1e8;
+  --color-ens-lapis-surface: #79b1d0;
+  --color-ens-lapis-core: #0080bc;
+  --color-ens-lapis-dense: #093c52;
+  --color-ens-lapis-bg: #e5f7ff;
+  --color-ens-lapis-tint: #f5fcff;
+
+  --color-ens-bronzite-dust: #f8f6d6;
+  --color-ens-bronzite-surface: #ae9582;
+  --color-ens-bronzite-core: #674d49;
+  --color-ens-bronzite-dense: #431c11;
+
+  --color-ens-peridot-100: #d1eedf;
+  --color-ens-peridot-300: #65d388;
+  --color-ens-peridot-400: #1cbf46;
+  --color-ens-peridot-500: #007c20;
+  --color-ens-peridot-900: #033010;
+  --color-ens-peridot-dust: #c5ddcc;
+  --color-ens-peridot-surface: #74ac76;
+  --color-ens-peridot-core: #007c23;
+  --color-ens-peridot-dense: #033010;
+  --color-ens-peridot-border: oklch(0.926 0.084 155.9);
+  --color-ens-peridot-bg: oklch(0.954 0.027 160.9);
+  --color-ens-peridot-text-dark: oklch(0.447 0.119 151.4);
+  --color-ens-peridot-text-medium: oklch(0.53 0.149 149);
+
+  --color-ens-garnet-50: #fff6f9;
+  --color-ens-garnet-100: #feeaf0;
+  --color-ens-garnet-200: #ffc6e0;
+  --color-ens-garnet-300: #ffb0d0;
+  --color-ens-garnet-400: #f569ab;
+  --color-ens-garnet-500: #e72a96;
+  --color-ens-garnet-800: #4a0326;
+  --color-ens-garnet-900: #5a0024;
+  --color-ens-garnet-dust: #f2c4da;
+  --color-ens-garnet-surface: #f886b6;
+  --color-ens-garnet-core: #f53293;
+  --color-ens-garnet-dense: #8a0a49;
+  --color-ens-garnet-900: #5a0024;
+  --color-ens-error: #f53f3f;
+
+  --color-ens-citrine-50: #fff8f0;
+  --color-ens-citrine-100: #f8f7e2;
+  --color-ens-citrine-300: #e1b77e;
+  --color-ens-citrine-400: #e7a259;
+  --color-ens-citrine-450: #c68a1b;
+  --color-ens-citrine-500: #984d1b;
+  --color-ens-citrine-600: #b35600;
+  --color-ens-citrine-900: #441b03;
+
+  --color-ens-quartz-0: #ffffff;
+  --color-ens-quartz-50: #faf9f7;
+  --color-ens-quartz-75: #f4f4f4;
+  --color-ens-quartz-100: #eeeded;
+  --color-ens-quartz-150: #eae8e8;
+  --color-ens-quartz-200: #e1e1e0;
+  --color-ens-quartz-250: #d9d9d9;
+  --color-ens-quartz-300: #c7c6c4;
+  --color-ens-quartz-350: #a1a1a1;
+  --color-ens-quartz-360: #9b9ba7;
+  --color-ens-quartz-380: #7d7d7d;
+  --color-ens-quartz-400: #737373;
+  --color-ens-quartz-450: #454444;
+  --color-ens-quartz-500: #595755;
+  --color-ens-quartz-550: #515151;
+  --color-ens-quartz-700: #333333;
+  --color-ens-quartz-900: #191919;
+
+  --color-ens-signal-danger-100: #ffedeb;
+  --color-ens-signal-danger-200: #ffdad6;
+  --color-ens-signal-danger-300: #ffc9c4;
+  --color-ens-signal-danger-400: #ffb3ac;
+  --color-ens-signal-danger-500: #c82e1f;
+  --color-ens-signal-danger-600: #b42013;
+  --color-ens-signal-danger-700: #9a1b10;
+  --color-ens-signal-danger-800: #821a11;
+  --color-ens-signal-danger-900: #440e09;
+
+  --color-ens-signal-success-100: #e3f7e9;
+  --color-ens-signal-success-200: #d7f4df;
+  --color-ens-signal-success-300: #c6efd1;
+  --color-ens-signal-success-400: #aae9ba;
+  --color-ens-signal-success-500: #15a571;
+  --color-ens-signal-success-600: #167e30;
+  --color-ens-signal-success-700: #105c23;
+  --color-ens-signal-success-800: #0e4a1d;
+  --color-ens-signal-success-900: #0a3816;
+
+  --color-ens-signal-warning-100: #fffaeb;
+  --color-ens-signal-warning-200: #fff7e0;
+  --color-ens-signal-warning-300: #fef3d5;
+  --color-ens-signal-warning-400: #feeec4;
+  --color-ens-signal-warning-500: #fccf57;
+  --color-ens-signal-warning-600: #e1a31e;
+  --color-ens-signal-warning-700: #955b14;
+  --color-ens-signal-warning-800: #79490e;
+  --color-ens-signal-warning-900: #5c2d00;
+
+  /* Old brand colors */
+  --color-ens-blue: #0080bc;
+  --color-ens-blue-hover: #0070a4;
+  --color-ens-blue-light: #cee1e8;
+  --color-ens-blue-light-hover: #d8e7ed;
+  --color-ens-blue-midnight: #093c52;
+  --color-ens-blue-dark: #011a25;
+  --color-ens-magenta: #f53293;
+  --color-ens-magenta-light: #f2c4da;
+  --color-ens-green: #007c23;
+  --color-ens-green-light: #c5ddcc;
+  --color-ens-yellow: #fff72f;
+  --color-ens-yellow-light: #f8f6d6;
+  --color-ens-orange: #f47600;
+  --color-ens-orange-light: #ffe2b4;
+  --color-ens-brown-dark: #674d49;
+  --color-ens-gray: #4a5c63;
+  --Primary-Grey: #4a5c63;
+  --color-ens-gray-two: #e5e5e5;
+  --color-ens-gray-three: #c4c7c8;
+  --color-ens-white: #f6f6f6;
+
+  /* 4-character premium name pill (Figma: 4-character-premium-name) */
+  --4-character-premium-name: linear-gradient(
+    103deg,
+    #e2e8f0 22.67%,
+    #606262 287.71%
+  );
+
+  /* Temp names to be given official names once the design system is finalized */
+  --text-temp-64px: 4rem; /* TEMP NAME - Designs commonly use 64px for h1's but no official name has been given */
+  --text-temp-64px--line-height: 78%;
+  --text-temp-32px: 2rem;
+  --text-temp-32px--line-height: 110%;
+
+  --shadow-temp-card: 0 4px 24px 0 rgba(7, 28, 47, 0.07);
+
+  --color-navigation-glass-border: #e2e2e28c;
+  --blur-navigation-glass: 6px;
+
+  --breakpoint-xs: 30rem;
+}
+
+/* ===============================
+ * Shadcn Theme
+ * ===============================
+ */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+:root {
+  /* WalletConnect (reown) modal reads `z-index: var(--w3m-z-index)`; when we
+     use the bare wagmi walletConnect connector nothing defines it, so it
+     collapses to auto and the app's own z-indexed elements (landing header,
+     search bar) stack over the QR modal. Define it high so the modal sits
+     above everything. Same fix as the portal app. */
+  --w3m-z-index: 2147483646;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}

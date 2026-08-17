@@ -1,0 +1,23 @@
+{
+  "name": "@ens-apps/migration",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "lint": "biome check"
+  },
+  "dependencies": {
+    "@ensdomains/ensjs": "catalog:",
+    "@ensdomains/ensjs-abi": "catalog:",
+    "viem": "catalog:"
+  },
+  "devDependencies": {
+    "typescript": "catalog:typescript6",
+    "vitest": "catalog:"
+  }
+}

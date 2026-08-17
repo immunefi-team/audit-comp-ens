@@ -1,0 +1,10 @@
+FROM ghcr.io/foundry-rs/foundry:latest
+
+# Pre-seeded Sepolia state — ENS V2 contracts deployed, test accounts funded.
+# Built by seed-state.sh + build-ens-v2-snapshot workflow.
+COPY anvil/state.json /state.json
+
+EXPOSE 8545
+
+ENTRYPOINT ["anvil"]
+CMD ["--load-state", "/state.json", "--chain-id", "11155111", "--port", "8545", "--host", "0.0.0.0"]
