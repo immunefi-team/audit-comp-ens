@@ -32,7 +32,7 @@
     "drizzle-orm": "^0.45.2",
     "graphql": "^16.11.0",
     "graphql-request": "^7.2.0",
-    "hono": "^4.12.34",
+    "hono": "^4.13.5",
     "lucide": "^0.542.0",
     "neverthrow": "^8.2.0",
     "pg": "^8.16.3",
