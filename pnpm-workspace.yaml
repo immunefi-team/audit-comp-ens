@@ -11,7 +11,7 @@ catalog:
   "@ensdomains/ensjs-abi": "https://pkg.pr.new/ensdomains/ensjs/@ensdomains/ensjs-abi@e96662c"
   xstate: ^5.24.0
   "@typescript/native-preview": 7.0.0-dev.20260421.2
-  vite: ^8.0.10
+  vite: ^8.1.6
   vitest: ^4.1.5
   "@vitest/coverage-v8": ^4.1.5
   "@cloudflare/vite-plugin": ^1.33.1

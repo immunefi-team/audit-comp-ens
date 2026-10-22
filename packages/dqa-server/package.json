@@ -24,6 +24,6 @@
     "@types/ws": "^8.5.13",
     "html-to-image": "1.11.13",
     "typescript": "catalog:typescript6",
-    "vite": "^8.0.10"
+    "vite": "^8.1.6"
   }
 }
