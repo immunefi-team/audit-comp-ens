@@ -791,8 +791,8 @@ importers:
   packages/dqa-server:
     dependencies:
       '@hono/node-server':
-        specifier: ^2.1.0
-        version: 2.1.0(hono@4.12.34)
+        specifier: ^2.1.3
+        version: 2.1.3(hono@4.12.34)
       hono:
         specifier: ^4.12.34
         version: 4.12.34
@@ -987,7 +987,7 @@ importers:
         version: 4.1.5(@types/node@24.10.2)(@vitest/coverage-v8@4.1.5)(happy-dom@18.0.1)(vite@8.0.16(@types/node@24.10.2)(esbuild@0.28.1)(jiti@2.7.0)(tsx@4.21.0)(yaml@2.8.2))
       wagmi:
         specifier: 'catalog:'
-        version: 3.7.6(@tanstack/query-core@5.90.12)(@tanstack/react-query@5.90.12(react@19.2.5))(@types/react@19.2.7)(@walletconnect/ethereum-provider@2.21.10(@types/react@19.2.7)(react@19.2.5)(typescript@6.0.3)(zod@4.1.13))(react@19.2.5)(typescript@6.0.3)(viem@2.52.2(typescript@6.0.3)(zod@4.1.13))
+        version: 3.7.6(@tanstack/query-core@5.90.12)(@tanstack/react-query@5.90.12(react@19.2.5))(@types/react@19.2.7)(@walletconnect/ethereum-provider@2.21.10(@types/react@19.2.7)(react@19.2.5)(typescript@6.0.3)(zod@4.1.13))(immer@10.2.0)(react@19.2.5)(typescript@6.0.3)(viem@2.52.2(typescript@6.0.3)(zod@4.1.13))
 
   packages/utils:
     dependencies:
@@ -1386,6 +1386,7 @@ packages:
 
   '@cloudflare/vitest-pool-workers@0.16.18':
     resolution: {integrity: sha512-TEktXyevK9lkTWouElbIcDPK3YEfV+Szqgnlq5sNk+KYZR3LiDdYDaGNmUYgiT2LiiFeGU2yzCrcgmN8mJhqWQ==}
+    deprecated: '@cloudflare/vitest-pool-workers has been renamed to @cloudflare/vitest-plugin. This package will not receive future updates.'
     peerDependencies:
       '@vitest/runner': ^4.1.0
       '@vitest/snapshot': ^4.1.0
@@ -2476,8 +2477,8 @@ packages:
     peerDependencies:
       graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
 
-  '@hono/node-server@2.1.0':
-    resolution: {integrity: sha512-XovyyCCnBzW+zKu+z/zq8hwNs4KOR5rEMAOxo2f40Q5xoOI37IMm6MIg2COOUtUApo0i6850MTBKH2u4QLGIqg==}
+  '@hono/node-server@2.1.3':
+    resolution: {integrity: sha512-TA//nWMqPhbfdfneACk6t5a9eqbS9lABEPyKn0/xZTah3H3U2XaVg85rJFl0/Fyit0I552YDHgXGVSf3GwqbUw==}
     engines: {node: '>=20'}
     peerDependencies:
       hono: ^4
@@ -9640,7 +9641,7 @@ snapshots:
     dependencies:
       graphql: 16.12.0
 
-  '@hono/node-server@2.1.0(hono@4.12.34)':
+  '@hono/node-server@2.1.3(hono@4.12.34)':
     dependencies:
       hono: 4.12.34
 
@@ -12521,20 +12522,20 @@ snapshots:
       convert-source-map: 2.0.0
       tinyrainbow: 3.1.0
 
+  '@wagmi/connectors@8.1.0(@wagmi/core@3.6.4(@tanstack/query-core@5.90.12)(@types/react@19.2.7)(immer@10.2.0)(react@19.2.5)(typescript@6.0.3)(use-sync-external-store@1.4.0(react@19.2.5))(viem@2.52.2(typescript@6.0.3)(zod@4.1.13)))(@walletconnect/ethereum-provider@2.21.10(@types/react@19.2.7)(react@19.2.5)(typescript@6.0.3)(zod@4.1.13))(typescript@6.0.3)(viem@2.52.2(typescript@6.0.3)(zod@4.1.13))':
+    dependencies:
+      '@wagmi/core': 3.6.4(@tanstack/query-core@5.90.12)(@types/react@19.2.7)(immer@10.2.0)(react@19.2.5)(typescript@6.0.3)(use-sync-external-store@1.4.0(react@19.2.5))(viem@2.52.2(typescript@6.0.3)(zod@4.1.13))
+      viem: 2.52.2(typescript@6.0.3)(zod@4.1.13)
+    optionalDependencies:
+      '@walletconnect/ethereum-provider': 2.21.10(@types/react@19.2.7)(react@19.2.5)(typescript@6.0.3)(zod@4.1.13)
+      typescript: 6.0.3
+
   '@wagmi/connectors@8.1.0(@wagmi/core@3.6.4(@tanstack/query-core@5.90.12)(@types/react@19.2.7)(immer@10.2.0)(react@19.2.5)(typescript@6.0.3)(use-sync-external-store@1.6.0(react@19.2.5))(viem@2.52.2(typescript@6.0.3)(zod@3.25.76)))(@walletconnect/ethereum-provider@2.21.10(@types/react@19.2.7)(react@19.2.5)(typescript@6.0.3)(zod@3.25.76))(typescript@6.0.3)(viem@2.52.2(typescript@6.0.3)(zod@3.25.76))':
     dependencies:
       '@wagmi/core': 3.6.4(@tanstack/query-core@5.90.12)(@types/react@19.2.7)(immer@10.2.0)(react@19.2.5)(typescript@6.0.3)(use-sync-external-store@1.6.0(react@19.2.5))(viem@2.52.2(typescript@6.0.3)(zod@3.25.76))
       viem: 2.52.2(typescript@6.0.3)(zod@3.25.76)
     optionalDependencies:
       '@walletconnect/ethereum-provider': 2.21.10(@types/react@19.2.7)(react@19.2.5)(typescript@6.0.3)(zod@3.25.76)
-      typescript: 6.0.3
-
-  '@wagmi/connectors@8.1.0(@wagmi/core@3.6.4(@tanstack/query-core@5.90.12)(@types/react@19.2.7)(react@19.2.5)(typescript@6.0.3)(use-sync-external-store@1.4.0(react@19.2.5))(viem@2.52.2(typescript@6.0.3)(zod@4.1.13)))(@walletconnect/ethereum-provider@2.21.10(@types/react@19.2.7)(react@19.2.5)(typescript@6.0.3)(zod@4.1.13))(typescript@6.0.3)(viem@2.52.2(typescript@6.0.3)(zod@4.1.13))':
-    dependencies:
-      '@wagmi/core': 3.6.4(@tanstack/query-core@5.90.12)(@types/react@19.2.7)(react@19.2.5)(typescript@6.0.3)(use-sync-external-store@1.4.0(react@19.2.5))(viem@2.52.2(typescript@6.0.3)(zod@4.1.13))
-      viem: 2.52.2(typescript@6.0.3)(zod@4.1.13)
-    optionalDependencies:
-      '@walletconnect/ethereum-provider': 2.21.10(@types/react@19.2.7)(react@19.2.5)(typescript@6.0.3)(zod@4.1.13)
       typescript: 6.0.3
 
   '@wagmi/core@3.6.4(@tanstack/query-core@5.90.12)(@types/react@19.2.7)(immer@10.2.0)(react@19.2.5)(typescript@6.0.3)(use-sync-external-store@1.4.0(react@19.2.5))(viem@2.52.2(typescript@6.0.3)(zod@3.25.76))':
@@ -12552,12 +12553,12 @@ snapshots:
       - react
       - use-sync-external-store
 
-  '@wagmi/core@3.6.4(@tanstack/query-core@5.90.12)(@types/react@19.2.7)(immer@10.2.0)(react@19.2.5)(typescript@6.0.3)(use-sync-external-store@1.6.0(react@19.2.5))(viem@2.52.2(typescript@6.0.3)(zod@3.25.76))':
+  '@wagmi/core@3.6.4(@tanstack/query-core@5.90.12)(@types/react@19.2.7)(immer@10.2.0)(react@19.2.5)(typescript@6.0.3)(use-sync-external-store@1.4.0(react@19.2.5))(viem@2.52.2(typescript@6.0.3)(zod@4.1.13))':
     dependencies:
       eventemitter3: 5.0.1
       mipd: 0.0.7(typescript@6.0.3)
-      viem: 2.52.2(typescript@6.0.3)(zod@3.25.76)
-      zustand: 5.0.0(@types/react@19.2.7)(immer@10.2.0)(react@19.2.5)(use-sync-external-store@1.6.0(react@19.2.5))
+      viem: 2.52.2(typescript@6.0.3)(zod@4.1.13)
+      zustand: 5.0.0(@types/react@19.2.7)(immer@10.2.0)(react@19.2.5)(use-sync-external-store@1.4.0(react@19.2.5))
     optionalDependencies:
       '@tanstack/query-core': 5.90.12
       typescript: 6.0.3
@@ -12567,12 +12568,12 @@ snapshots:
       - react
       - use-sync-external-store
 
-  '@wagmi/core@3.6.4(@tanstack/query-core@5.90.12)(@types/react@19.2.7)(react@19.2.5)(typescript@6.0.3)(use-sync-external-store@1.4.0(react@19.2.5))(viem@2.52.2(typescript@6.0.3)(zod@4.1.13))':
+  '@wagmi/core@3.6.4(@tanstack/query-core@5.90.12)(@types/react@19.2.7)(immer@10.2.0)(react@19.2.5)(typescript@6.0.3)(use-sync-external-store@1.6.0(react@19.2.5))(viem@2.52.2(typescript@6.0.3)(zod@3.25.76))':
     dependencies:
       eventemitter3: 5.0.1
       mipd: 0.0.7(typescript@6.0.3)
-      viem: 2.52.2(typescript@6.0.3)(zod@4.1.13)
-      zustand: 5.0.0(@types/react@19.2.7)(react@19.2.5)(use-sync-external-store@1.4.0(react@19.2.5))
+      viem: 2.52.2(typescript@6.0.3)(zod@3.25.76)
+      zustand: 5.0.0(@types/react@19.2.7)(immer@10.2.0)(react@19.2.5)(use-sync-external-store@1.6.0(react@19.2.5))
     optionalDependencies:
       '@tanstack/query-core': 5.90.12
       typescript: 6.0.3
@@ -16509,11 +16510,11 @@ snapshots:
       - accounts
       - immer
 
-  wagmi@3.7.6(@tanstack/query-core@5.90.12)(@tanstack/react-query@5.90.12(react@19.2.5))(@types/react@19.2.7)(@walletconnect/ethereum-provider@2.21.10(@types/react@19.2.7)(react@19.2.5)(typescript@6.0.3)(zod@4.1.13))(react@19.2.5)(typescript@6.0.3)(viem@2.52.2(typescript@6.0.3)(zod@4.1.13)):
+  wagmi@3.7.6(@tanstack/query-core@5.90.12)(@tanstack/react-query@5.90.12(react@19.2.5))(@types/react@19.2.7)(@walletconnect/ethereum-provider@2.21.10(@types/react@19.2.7)(react@19.2.5)(typescript@6.0.3)(zod@4.1.13))(immer@10.2.0)(react@19.2.5)(typescript@6.0.3)(viem@2.52.2(typescript@6.0.3)(zod@4.1.13)):
     dependencies:
       '@tanstack/react-query': 5.90.12(react@19.2.5)
-      '@wagmi/connectors': 8.1.0(@wagmi/core@3.6.4(@tanstack/query-core@5.90.12)(@types/react@19.2.7)(react@19.2.5)(typescript@6.0.3)(use-sync-external-store@1.4.0(react@19.2.5))(viem@2.52.2(typescript@6.0.3)(zod@4.1.13)))(@walletconnect/ethereum-provider@2.21.10(@types/react@19.2.7)(react@19.2.5)(typescript@6.0.3)(zod@4.1.13))(typescript@6.0.3)(viem@2.52.2(typescript@6.0.3)(zod@4.1.13))
-      '@wagmi/core': 3.6.4(@tanstack/query-core@5.90.12)(@types/react@19.2.7)(react@19.2.5)(typescript@6.0.3)(use-sync-external-store@1.4.0(react@19.2.5))(viem@2.52.2(typescript@6.0.3)(zod@4.1.13))
+      '@wagmi/connectors': 8.1.0(@wagmi/core@3.6.4(@tanstack/query-core@5.90.12)(@types/react@19.2.7)(immer@10.2.0)(react@19.2.5)(typescript@6.0.3)(use-sync-external-store@1.4.0(react@19.2.5))(viem@2.52.2(typescript@6.0.3)(zod@4.1.13)))(@walletconnect/ethereum-provider@2.21.10(@types/react@19.2.7)(react@19.2.5)(typescript@6.0.3)(zod@4.1.13))(typescript@6.0.3)(viem@2.52.2(typescript@6.0.3)(zod@4.1.13))
+      '@wagmi/core': 3.6.4(@tanstack/query-core@5.90.12)(@types/react@19.2.7)(immer@10.2.0)(react@19.2.5)(typescript@6.0.3)(use-sync-external-store@1.4.0(react@19.2.5))(viem@2.52.2(typescript@6.0.3)(zod@4.1.13))
       react: 19.2.5
       use-sync-external-store: 1.4.0(react@19.2.5)
       viem: 2.52.2(typescript@6.0.3)(zod@4.1.13)
@@ -16765,9 +16766,3 @@ snapshots:
       immer: 10.2.0
       react: 19.2.5
       use-sync-external-store: 1.6.0(react@19.2.5)
-
-  zustand@5.0.0(@types/react@19.2.7)(react@19.2.5)(use-sync-external-store@1.4.0(react@19.2.5)):
-    optionalDependencies:
-      '@types/react': 19.2.7
-      react: 19.2.5
-      use-sync-external-store: 1.4.0(react@19.2.5)
