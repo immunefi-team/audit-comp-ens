@@ -66,7 +66,7 @@
     "class-variance-authority": "^0.7.1",
     "cmdk": "^1.1.1",
     "graphql-request": "^7.3.5",
-    "i18next": "^25.6.3",
+    "i18next": "^26.3.4",
     "i18next-browser-languagedetector": "^8.2.0",
     "lucide": "^0.542.0",
     "lucide-react": "^0.542.0",
